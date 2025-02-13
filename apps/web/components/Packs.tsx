@@ -1,5 +1,5 @@
 import { BACKEND_URL } from "@/app/config";
-import { PackCard, TPack } from "./PackCard";
+import {  TPack } from "./PackCard";
 import axios from "axios";
 import { PacksClient } from "./PacksClient";
 
