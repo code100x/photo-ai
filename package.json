@@ -19,5 +19,9 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "embla-carousel-autoplay": "^8.5.2",
+    "framer-motion": "^12.4.2"
+  }
 }
