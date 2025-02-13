@@ -7,7 +7,7 @@ export function Appbar() {
       <div className="text-xl">PhotoAI</div>
       <div>
         <SignedOut>
-          <Button variant={"ghost"} asChild>
+          <Button className="cursor-pointer" variant={"ghost"} asChild>
             <SignInButton />
           </Button>
         </SignedOut>
