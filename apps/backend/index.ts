@@ -6,6 +6,11 @@ import { S3Client } from "bun";
 import { FalAIModel } from "./models/FalAIModel";
 import cors from "cors";
 import { authMiddleware } from "./middleware";
+import Razorpay from "razorpay";
+import dotenv from "dotenv";
+import { generatedSignature } from "./utils";
+
+dotenv.config()
 
 const PORT = process.env.PORT || 8080;
 
@@ -14,6 +19,100 @@ const falAiModel = new FalAIModel();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID || "testkey",
+  key_secret: process.env.RAZORPAY_KEY_SECRET || "test-secret"
+})
+
+app.post("/razorpay/verify", authMiddleware, async (req, res) => {
+  const { orderCreationId, razorpayPaymentId, razorpaySignature } = req.body;
+
+  const signature = generatedSignature(orderCreationId, razorpayPaymentId);
+
+  if (signature !== razorpaySignature) {
+    console.error("Signature mismatch!");
+
+    try {
+      await prismaClient.payment.update({
+        where: { providerId: orderCreationId},
+        data: { status: 'failed', updatedAt: new Date() }
+      });
+
+      res.status(401).json({ message: 'Payment verification failed', isOk: false });
+    } catch (error) {
+      console.error("Error updating payment status:", error);
+      res.status(500).json({ message: 'Failed to update payment status' });
+    }
+    return;
+  }
+
+  try {
+    await prismaClient.payment.update({
+      where: { providerId: orderCreationId },
+      data: { status: 'paid', updatedAt: new Date() }
+    });
+
+    const payment = await prismaClient.payment.findUnique({ where: { providerId: orderCreationId } });
+    if (payment) {
+      await prismaClient.user.update({
+        where: { id: req.userId },
+        data: { credits: { increment: payment.amount } }
+      });
+
+      const creditLogs = await prismaClient.creditLog.create({
+        data : {
+          userId : req.userId!,
+          amount : payment.amount,
+          type : "credit"
+        }
+      })  
+    }
+    
+    res.status(200).json({ message: 'Payment verified successfully', isOk: true });
+  } catch (error) {
+    console.error("Error in payment verification:", error);
+    res.status(500).json({ message: 'Failed to verify payment', isOk: false });
+  }
+});
+
+app.post("/razorpay/create-order", authMiddleware, async (req, res) => {
+  const { amount, currency, receipt } = req.body;
+
+  if (!amount || !currency || !receipt) {
+    res.status(400).json({ error: "Missing required fields" });
+    return;
+  }
+
+  try {
+    const options = {
+      amount: amount * 100,
+      currency: currency,
+      receipt: receipt.toString(),
+      payment_capture: 1
+    };
+
+    const order = await razorpay.orders.create(options);
+    console.log("Created order:", order);
+
+    const payment = await prismaClient.payment.create({
+      data: {
+        userId: req.userId!, 
+        amount: amount,
+        currency: currency,
+        provider: 'razorpay',
+        providerId: order.id,
+        receipt: receipt,
+        status: 'pending',
+      },
+    });
+
+    res.status(200).json({ order, payment });
+  } catch (error) {
+    console.error("Razorpay Error:", error);
+    res.status(500).json({ error: "Payment order creation failed" });
+  }
+});
 
 app.get("/pre-signed-url", async (req, res) => {
   const key = `models/${Date.now()}_${Math.random()}.zip`;
@@ -65,91 +164,91 @@ app.post("/ai/training", authMiddleware, async (req, res) => {
 })
 
 app.post("/ai/generate", authMiddleware, async (req, res) => {
-    const parsedBody = GenerateImage.safeParse(req.body)
+  const parsedBody = GenerateImage.safeParse(req.body)
 
-    if (!parsedBody.success) {
-        res.status(411).json({
-            
-        })
-        return;
+  if (!parsedBody.success) {
+    res.status(411).json({
+
+    })
+    return;
+  }
+
+  const model = await prismaClient.model.findUnique({
+    where: {
+      id: parsedBody.data.modelId
     }
+  })
 
-    const model = await prismaClient.model.findUnique({
-        where: {
-            id: parsedBody.data.modelId
-        }
+  if (!model || !model.tensorPath) {
+    res.status(411).json({
+      message: "Model not found"
     })
+    return;
+  }
 
-    if (!model || !model.tensorPath) {
-        res.status(411).json({
-            message: "Model not found"
-        })
-        return;
+  console.log("ji there")
+  const { request_id, response_url } = await falAiModel.generateImage(parsedBody.data.prompt, model.tensorPath);
+
+  const data = await prismaClient.outputImages.create({
+    data: {
+      prompt: parsedBody.data.prompt,
+      userId: req.userId!,
+      modelId: parsedBody.data.modelId,
+      imageUrl: "",
+      falAiRequestId: request_id
     }
+  })
 
-    console.log("ji there")
-    const {request_id, response_url} = await falAiModel.generateImage(parsedBody.data.prompt, model.tensorPath);
-
-    const data = await prismaClient.outputImages.create({
-        data: {
-            prompt: parsedBody.data.prompt,
-            userId: req.userId!,
-            modelId: parsedBody.data.modelId,
-            imageUrl: "",
-            falAiRequestId: request_id
-        }
-    })
-
-    res.json({
-        imageId: data.id
-    })
+  res.json({
+    imageId: data.id
+  })
 })
 
 app.post("/pack/generate", authMiddleware, async (req, res) => {
-    const parsedBody = GenerateImagesFromPack.safeParse(req.body)
+  const parsedBody = GenerateImagesFromPack.safeParse(req.body)
 
-    if (!parsedBody.success) {
-        res.status(411).json({
-            message: "Input incorrect"
-        })
-        return;
+  if (!parsedBody.success) {
+    res.status(411).json({
+      message: "Input incorrect"
+    });
+    return; // Ensure the function exits here
+  }
+
+  const prompts = await prismaClient.packPrompts.findMany({
+    where: {
+      packId: parsedBody.data.packId
     }
-    
-    const prompts = await prismaClient.packPrompts.findMany({
-        where: {
-            packId: parsedBody.data.packId
-        }
-    })
+  });
 
-    const model = await prismaClient.model.findFirst({
-      where: {
-        id: parsedBody.data.modelId
-      }
-    })
-
-    if (!model) {
-      return res.status(411).json({
-        "message": "Model not found"
-      })
+  const model = await prismaClient.model.findFirst({
+    where: {
+      id: parsedBody.data.modelId
     }
+  });
 
-    let requestIds: { request_id: string }[] = await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt, model.tensorPath!)));
+  if (!model) {
+    res.status(411).json({
+      "message": "Model not found"
+    });
+    return; // Ensure the function exits here
+  }
 
-    const images = await prismaClient.outputImages.createManyAndReturn({
-        data: prompts.map((prompt, index) => ({
-            prompt: prompt.prompt,
-            userId: req.userId!,
-            modelId: parsedBody.data.modelId,
-            imageUrl: "",
-            falAiRequestId: requestIds[index].request_id
-        }))
-    })
+  let requestIds: { request_id: string }[] = await Promise.all(prompts.map((prompt) => falAiModel.generateImage(prompt.prompt, model.tensorPath!)));
 
-    res.json({
-        images: images.map((image) => image.id)
-    })
-    
-})
+  const images = await prismaClient.outputImages.createManyAndReturn({
+    data: prompts.map((prompt, index) => ({
+      prompt: prompt.prompt,
+      userId: req.userId!,
+      modelId: parsedBody.data.modelId,
+      imageUrl: "",
+      falAiRequestId: requestIds[index].request_id
+    }))
+  });
+
+  res.json({
+    images: images.map((image) => image.id)
+  });
+});
 
 app.get("/pack/bulk", async (req, res) => {
   const packs = await prismaClient.packs.findMany({})
@@ -166,7 +265,7 @@ app.get("/image/bulk", authMiddleware, async (req, res) => {
 
   const imagesData = await prismaClient.outputImages.findMany({
     where: {
-      id: { in: ids }, 
+      id: { in: ids },
       userId: req.userId!,
       status: {
         not: "Failed"
@@ -184,7 +283,7 @@ app.get("/image/bulk", authMiddleware, async (req, res) => {
   })
 })
 
-app.get("/models", authMiddleware, async(req, res) => {
+app.get("/models", authMiddleware, async (req, res) => {
   const models = await prismaClient.model.findMany({
     where: {
       OR: [{ userId: req.userId }, { open: true }]
@@ -197,8 +296,8 @@ app.get("/models", authMiddleware, async(req, res) => {
 })
 
 app.post("/fal-ai/webhook/train", async (req, res) => {
-  const requestId = req.body.request_id as string; 
-  
+  const requestId = req.body.request_id as string;
+
   const result = await fal.queue.result("fal-ai/flux-lora", {
     requestId
   });
@@ -256,6 +355,8 @@ app.post("/fal-ai/webhook/image", async (req, res) => {
     message: "Webhook received"
   })
 })
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
