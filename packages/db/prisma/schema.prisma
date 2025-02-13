@@ -12,13 +12,40 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model User {
   id             String     @id    @default(uuid())
   username       String
   profilePicture String?
+
+  credits        Int        @default(0)
   createdAt      DateTime   @default(now())
   updatedAt      DateTime   @updatedAt
+
+  creditLogs     CreditLog[]
+  payments       Payment[]
+}
+
+model CreditLog { 
+  id        String  @id @default(uuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  amount    Int
+  type      String  // "credit" or "debit" 
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  amount         Int
+  currency       String   @default("INR")
+  status         String   @default("pending") // "paid", "failed" , "pending"
+  provider       String   // "razorpay" or "stripe"
+  providerId     String   @unique // Razorpay Order ID or Stripe PaymentIntent ID
+  receipt        String?  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 enum ModelTrainingStatusEnum {
