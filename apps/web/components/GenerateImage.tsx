@@ -45,7 +45,7 @@ export function GenerateImage() {
           />
         </div>
 
-        {/* Generate Button */}
+        
         <div className="flex justify-center">
           <Button
             onClick={async () => {
