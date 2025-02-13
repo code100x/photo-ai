@@ -55,7 +55,7 @@ export function Hero() {
                     }} className="mt-4 px-16 py-6" size={"lg"} variant={"secondary"}>Dashboard</Button>
                 </SignedIn>
                 <SignedOut>
-                    <Button className="mt-4 px-16 py-6" size={"lg"} variant={"secondary"}>
+                    <Button asChild className="mt-4 px-16 py-6" size={"lg"} variant={"secondary"}>
                         <SignInButton />
                     </Button>
                 </SignedOut>
