@@ -14,7 +14,7 @@ export function Appbar() {
         </div>
         <div>
             <SignedOut>
-                <Button variant={"ghost"}>
+                <Button variant={"ghost"} asChild>
                     <SignInButton />
                 </Button>
             </SignedOut>
