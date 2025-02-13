@@ -1,12 +1,28 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export default clerkMiddleware();
+export default clerkMiddleware({
+  afterAuth(auth, req) {
+    // Replace this condition with your actual payment check
+    const isPaid = false; // This should come from your database
+    const isAuthPage = req.nextUrl.pathname.startsWith("/pricing");
+    const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
+
+    if (!auth.userId && isDashboard) {
+      const signInUrl = new URL("/sign-in", req.url);
+      return NextResponse.redirect(signInUrl);
+    }
+
+    if (auth.userId && isDashboard && !isPaid && !isAuthPage) {
+      const pricingUrl = new URL("/pricing", req.url);
+      return NextResponse.redirect(pricingUrl);
+    }
+
+    return NextResponse.next();
+  },
+  publicRoutes: ["/", "/pricing"],
+});
 
 export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 };

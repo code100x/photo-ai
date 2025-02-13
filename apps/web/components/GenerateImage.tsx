@@ -1,6 +1,7 @@
 "use client"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from "@clerk/nextjs"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Textarea } from "@/components/ui/textarea"
@@ -8,13 +9,32 @@ import axios from "axios";
 import { BACKEND_URL } from "@/app/config";
 import { SelectModel } from "./Models";
 import toast from "react-hot-toast";
+import { checkPaymentStatus } from "@/utils/payment"
 
 
 export function GenerateImage() {
+    const router = useRouter()
+    const { getToken, userId } = useAuth()
     const [prompt, setPrompt] = useState("");
     const [selectedModel, setSelectedModel] = useState<string>();
+    const [isLoading, setIsLoading] = useState(true)
 
-    const { getToken } = useAuth()    
+    useEffect(() => {
+        const verifyPayment = async () => {
+            if (!userId) return
+            const hasPaid = await checkPaymentStatus(userId)
+            if (!hasPaid) {
+                toast.error("Please subscribe to continue")
+                router.push("/pricing")
+            }
+            setIsLoading(false)
+        }
+        verifyPayment()
+    }, [userId])
+
+    if (isLoading) {
+        return <div>Loading...</div>
+    }
 
     return <div className="items-center justify-center flex pt-4">
         <div>
