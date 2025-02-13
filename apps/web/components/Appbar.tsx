@@ -8,7 +8,7 @@ import {
 import { Button } from './ui/button'
 
 export function Appbar() {
-    return <div className='flex justify-between p-4 border-b'>
+    return <div className='flex w-full justify-between mx-auto bg-secondary/15 shadow-lg shadow-neutral-600/5 backdrop-blur-lg border border-primary/10 p-6 ' style={{ opacity: 1}} >
         <div className='text-xl'>
             PhotoAI
         </div>

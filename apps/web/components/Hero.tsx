@@ -1,29 +1,30 @@
 "use client";
 import {
-    ClerkProvider,
-    SignInButton,
-    SignedIn,
-    SignedOut,
-    UserButton
-  } from '@clerk/nextjs'
+  ClerkProvider,
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
 import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-  } from "@/components/ui/carousel"
-import { Button } from "./ui/button"
-import { useRouter } from 'next/navigation'
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 export function Hero() {
-    const router = useRouter();
-    return <div className="flex justify-center">
-        <div className="max-w-6xl">
-            <h1 className="text-8xl p-2 text-center pb-4">
-                Generate Images for yourself and your family
-            </h1>
-            <Carousel>
+  const router = useRouter();
+  return (
+    <div className="flex justify-center">
+      <div className="max-w-6xl">
+        <h1 className="text-6xl p-16 font-serif text-[#b3b3b4]  text-center pb-4 ">
+          Generate Images for yourself
+        </h1>
+        {/* <Carousel>
                 <CarouselContent>
                     <CarouselItem className="basis-1/4">
                         <img className="w-max-[400px]" src={'https://r2-us-west.photoai.com/1739277231-0b2465581e9551abecd467b163d0d48a-1.png'} />
@@ -46,20 +47,36 @@ export function Hero() {
                 </CarouselContent>
                 <CarouselPrevious />
                 <CarouselNext />
-            </Carousel>
+            </Carousel> */}
 
-            <div className="flex justify-center">
-                <SignedIn>
-                    <Button onClick={() => {
-                        router.push("/dashboard")
-                    }} className="mt-4 px-16 py-6" size={"lg"} variant={"secondary"}>Dashboard</Button>
-                </SignedIn>
-                <SignedOut>
-                    <Button className="mt-4 px-16 py-6" size={"lg"} variant={"secondary"}>
-                        <SignInButton />
-                    </Button>
-                </SignedOut>
-            </div>
+        <div className=" pt-4 flex justify-center">
+          <SignedIn>
+            <Button
+              onClick={() => {
+                router.push("/dashboard");
+              }}
+              className="bg-[#2457DB]  hover:bg-[#4A88EF] transition-all duration-300 text-xl text-gray-200 dark: px-8 py-6 rounded-sm animate-slide-in"
+              size={"lg"}
+              variant={"secondary"}
+            >
+              Get Started
+            </Button>
+          </SignedIn>
+          <SignedOut>
+            <Button
+              className="mt-4 px-16 py-6"
+              size={"lg"}
+              variant={"secondary"}
+            >
+              <SignInButton />
+            </Button>
+          </SignedOut>
         </div>
+
+        <div className="pt-10 bottom-0">
+            <img src="/group.png"></img>
+        </div>
+      </div>
     </div>
+  );
 }
