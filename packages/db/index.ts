@@ -1,3 +1,16 @@
-import { PrismaClient } from "@prisma/client";
-// convert this to a singleton for nextjs
-export const prismaClient = new PrismaClient();
+import { PrismaClient } from '@prisma/client';
+
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+export const prismaClient = globalForPrisma.prisma ?? new PrismaClient({
+  log: ['query', 'error', 'warn'],
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  globalForPrisma.prisma = prismaClient;
+}
+
+export const db = prismaClient;
+export * from '@prisma/client';

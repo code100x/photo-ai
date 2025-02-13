@@ -19,5 +19,21 @@
   "workspaces": [
     "apps/*",
     "packages/*"
+  ],
+  "dependencies": {
+    "@tailwindcss/oxide-win32-x64-msvc": "^4.0.6",
+    "embla-carousel-autoplay": "^8.5.2",
+    "framer-motion": "^12.4.2",
+    "lightningcss": "^1.29.1",
+    "razorpay": "^2.9.5",
+    "tailwindcss": "^4.0.6"
+  },
+  "trustedDependencies": [
+    "@clerk/shared",
+    "@prisma/client",
+    "@prisma/engines",
+    "core-js-pure",
+    "prisma",
+    "sharp"
   ]
 }

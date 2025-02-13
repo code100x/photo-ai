@@ -28,25 +28,22 @@ enum ModelTrainingStatusEnum {
 }
 
 model Model {
-  id              String      @id   @default(uuid())
-  name            String
-  type            ModelTypeEnum
-  age             Int
-  ethinicity      EthenecityEnum  
-  eyeColor        EyeColorEnum
-  bald            Boolean
-  userId          String
-  triggerWord     String?
-  tensorPath      String?
-  thumbnail       String?
-  trainingStatus  ModelTrainingStatusEnum @default(Pending)
-  outputImages    OutputImages[]
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  falAiRequestId  String?
-  zipUrl          String
-  open            Boolean    @default(false)
-  @@index([falAiRequestId])
+  id             String   @id @default(cuid())
+  name           String
+  type           String
+  age            Int?
+  ethinicity     String?
+  eyeColor       String?
+  bald           Boolean?
+  userId         String
+  zipUrl         String
+  tensorPath     String?
+  thumbnail      String?
+  falAiRequestId String?
+  trainingStatus String   @default("Pending")
+  open           Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 enum OutputImageStatusEnum {
@@ -56,17 +53,15 @@ enum OutputImageStatusEnum {
 }
 
 model OutputImages {
-  id        String  @id   @default(uuid())
-  imageUrl  String  @default("")
-  modelId   String
-  userId    String
-  prompt    String
-  falAiRequestId    String?
-  status    OutputImageStatusEnum   @default(Pending)
-  model     Model   @relation(fields: [modelId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@index([falAiRequestId])
+  id            String   @id @default(cuid())
+  userId        String
+  modelId       String
+  prompt        String
+  imageUrl      String?
+  status        String   @default("Pending")
+  falAiRequestId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Packs {
@@ -108,4 +103,15 @@ enum EyeColorEnum {
   Blue
   Hazel
   Gray
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  userId    String
+  plan      String
+  paymentId String
+  orderId   String
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

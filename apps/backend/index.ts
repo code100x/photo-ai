@@ -1,3 +1,6 @@
+import * as dotenv from 'dotenv';
+dotenv.config({ path: '../../.env' });
+
 import { fal } from "@fal-ai/client";
 import express from "express";
 import { TrainModel, GenerateImage, GenerateImagesFromPack } from "common/types";
@@ -6,6 +9,8 @@ import { S3Client } from "bun";
 import { FalAIModel } from "./models/FalAIModel";
 import cors from "cors";
 import { authMiddleware } from "./middleware";
+import paymentRoutes from "./routes/payment";
+import subscriptionRouter from "./routes/subscription";
 
 const PORT = process.env.PORT || 8080;
 
@@ -256,6 +261,9 @@ app.post("/fal-ai/webhook/image", async (req, res) => {
     message: "Webhook received"
   })
 })
+
+app.use("/payment", paymentRoutes);
+app.use("/subscription", subscriptionRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
