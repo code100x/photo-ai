@@ -202,7 +202,7 @@ export function Hero() {
             <SignedIn>
               <Button
                 onClick={() => router.push("/dashboard")}
-                className="group relative px-8 py-6 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1"
+                className="group relative px-8 py-6 text-lg bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-full transition-all duration-300 shadow-lg hover:shadow-xl hover:-translate-y-1 cursor-pointer"
               >
                 Go to Dashboard
                 <ArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
