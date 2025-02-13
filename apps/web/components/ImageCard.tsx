@@ -1,4 +1,5 @@
 import { Skeleton } from "./ui/skeleton";
+import { motion } from "framer-motion";
 
 export interface TImage {
   id: string;
@@ -11,23 +12,36 @@ const DEFAULT_BLUR_IMAGE =
 
 export function ImageCard(props: TImage) {
   return (
-    <div className="border rounded-xl max-w-[400px] cursor-pointer">
-      <div className="flex p-4 gap-4">
+    <motion.div
+      whileHover={{ scale: 1.05 }}
+      className="border rounded-xl max-w-full sm:max-w-[500px] overflow-hidden cursor-pointer"
+    >
+      <div className="flex gap-4 justify-center items-center">
         {props.status === "Generated" ? (
-          <img src={props.imageUrl} className="rounded" />
+          <motion.img
+            src={props.imageUrl}
+            className="rounded w-full h-auto"
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.3 }}
+          />
         ) : (
-          <img src={DEFAULT_BLUR_IMAGE} />
+          <motion.img
+            src={DEFAULT_BLUR_IMAGE}
+            className="w-full h-auto"
+            whileHover={{ scale: 1.1 }}
+            transition={{ duration: 0.3 }}
+          />
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 export function ImageCardSkeleton() {
   return (
-    <div className="border rounded-xl max-w-[400px] p-2 cursor-pointer w-full">
-      <div className="flex p-4 gap-4">
-        <Skeleton className="rounded h-40 w-[300px]" />
+    <div className="border rounded-xl max-w-full overflow-hidden sm:max-w-[400px] cursor-pointer w-full">
+      <div className="flex gap-4 justify-center items-center">
+        <Skeleton className="rounded h-56 w-full sm:w-[300px]" />
       </div>
     </div>
   );

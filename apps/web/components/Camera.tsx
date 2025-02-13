@@ -9,7 +9,7 @@ export function Camera() {
   const [images, setImages] = useState<TImage[]>([]);
   const [imagesLoading, setImagesLoading] = useState(true);
   const { getToken } = useAuth();
-
+``
   useEffect(() => {
     (async () => {
       const token = await getToken();
@@ -39,17 +39,19 @@ export function Camera() {
   }, [images]);
 
   return (
-    <div className="grid md:grid-cols-4 grid-cols-1 gap-2 pt-4">
+    <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-2 pt-4">
       {images.map((image) => (
         <ImageCard {...image} />
       ))}
       {imagesLoading && (
         <>
-          {" "}
           <ImageCardSkeleton></ImageCardSkeleton>
           <ImageCardSkeleton></ImageCardSkeleton>
-          <ImageCardSkeleton></ImageCardSkeleton>{" "}
-          <ImageCardSkeleton></ImageCardSkeleton>{" "}
+          <ImageCardSkeleton></ImageCardSkeleton>
+          <ImageCardSkeleton></ImageCardSkeleton>
+          <ImageCardSkeleton></ImageCardSkeleton>
+          <ImageCardSkeleton></ImageCardSkeleton>
+          <ImageCardSkeleton></ImageCardSkeleton>
           <ImageCardSkeleton></ImageCardSkeleton>
         </>
       )}

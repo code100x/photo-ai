@@ -14,7 +14,7 @@ interface AuthorCardProps {
   onclick?: () => void;
 }
 
-export const ModalCard = ({
+export const ModelCard = ({
   className,
   backgroundImage,
   content,
@@ -29,12 +29,12 @@ export const ModalCard = ({
         )}
         style={{ backgroundImage: `url(${backgroundImage})` }}
       >
-        <div className="absolute w-full h-full top-0 left-0 transition duration-300 group-hover/card:bg-black opacity-60" />
+        <div className="absolute w-full h-full top-0 left-0 transition duration-300 group-hover/card:bg-black opacity-40" />
         <div className="text content">
-          <h1 className="font-bold text-xl md:text-2xl text-gray-50 relative z-10">
+          <h1 className="font-semibold text-xl md:text-2xl text-neutral-50 relative z-10">
             {content?.title}
           </h1>
-          <p className="font-normal text-sm text-gray-50 relative z-10 my-4">
+          <p className="text-base font-semibold text-neutral-50 relative z-10 my-4">
             {content?.description}
           </p>
         </div>

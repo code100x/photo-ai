@@ -66,8 +66,8 @@ export function Train() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center pt-4">
-      <Card className="lg:w-4xl">
+    <div className="pt-4">
+      <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Train new model</CardTitle>
           <CardDescription>
