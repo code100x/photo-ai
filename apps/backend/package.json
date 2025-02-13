@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "bun run index.ts",
-    "dev": "bun run index.ts"
+    "dev": "bun --watch run index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
@@ -22,6 +22,7 @@
     "cors": "^2.8.5",
     "db": "*",
     "express": "^4.21.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "razorpay": "^2.9.5"
   }
 }
