@@ -5,6 +5,9 @@ node_modules
 .pnp
 .pnp.js
 
+# Bun
+bun.lockb
+
 # Local env files
 .env
 .env.local

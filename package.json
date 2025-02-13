@@ -19,5 +19,13 @@
   "workspaces": [
     "apps/*",
     "packages/*"
+  ],
+  "trustedDependencies": [
+    "@clerk/shared",
+    "@prisma/client",
+    "@prisma/engines",
+    "core-js-pure",
+    "prisma",
+    "sharp"
   ]
 }
