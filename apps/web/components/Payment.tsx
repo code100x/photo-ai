@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import axios from 'axios';
-import { BACKEND_URL } from '@/app/config'; 
+import { BACKEND_URL, RAZORPAY_KEY_ID } from '@/app/config'; 
 import { useAuth } from "@clerk/nextjs"
 
 function Payment() {
@@ -35,7 +35,7 @@ function Payment() {
   try {
    const orderId: string = await createOrderId();
    const options = {
-    key: "rzp_test_A5MIlKtlMDhrRH",
+    key: RAZORPAY_KEY_ID,
     order_id: orderId,
     handler: async function (response: any) {
      const data = {
