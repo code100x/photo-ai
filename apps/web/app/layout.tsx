@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Figtree, Instrument_Serif, Manrope } from "next/font/google";
 import "./globals.css";
 import { Appbar } from "@/components/Appbar";
 import { Providers } from "@/components/providers/Providers";
