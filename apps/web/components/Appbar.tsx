@@ -4,10 +4,12 @@ import { Button } from "./ui/button";
 export function Appbar() {
   return (
     <div className="flex justify-between p-4 border-b">
-      <div className="text-xl">PhotoAI</div>
+      <div className="text-2xl font-bold"><span className="text-blue-500 ">
+        100x</span>
+        PhotoAI</div>
       <div>
         <SignedOut>
-          <Button variant={"ghost"} asChild>
+          <Button className="bg-blue-500" asChild>
             <SignInButton />
           </Button>
         </SignedOut>
