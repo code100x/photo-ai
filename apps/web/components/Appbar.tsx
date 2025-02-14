@@ -29,7 +29,7 @@ export function Appbar() {
             initial={{ y: -100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className='fixed top-0 left-0 right-0 flex w-full justify-between mx-auto bg-background/50 backdrop-blur-md border-b border-primary/10 p-6 z-[100]'
+            className='fixed top-0 left-0 right-0 flex w-full justify-between mx-auto bg-background/50 backdrop-blur-md border-b border-primary/10 p-4 md:p-6 z-[100]'
         >
             <motion.div 
                 className='text-xl w-10 h-10 relative group cursor-pointer'
@@ -46,7 +46,7 @@ export function Appbar() {
                 />
             </motion.div>
 
-            <div className='flex items-center gap-4'>
+            <div className='flex items-center gap-2 md:gap-4'>
                 <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

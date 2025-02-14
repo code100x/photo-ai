@@ -13,21 +13,21 @@ export function Hero() {
   const router = useRouter();
 
   return (
-    <div className="relative w-full h-screen flex flex-col justify-center items-center">
+    <div className="relative w-full min-h-screen flex flex-col justify-center items-center px-4 py-20">
       <div className="absolute inset-0 z-0">
         <ImageSlider />
       </div>
       
-      <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
+      <div className="relative z-10 max-w-4xl mx-auto text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <h1 className="text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-500 dark:from-blue-300 dark:via-purple-300 dark:to-indigo-400 font-sans tracking-tight">
+          <h1 className="text-4xl md:text-7xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-indigo-500 dark:from-blue-300 dark:via-purple-300 dark:to-indigo-400 font-sans tracking-tight">
             Generate Images
           </h1>
-          <p className="mt-6 text-xl bg-clip-text text-transparent bg-gradient-to-r from-neutral-800 via-neutral-700 to-neutral-800 dark:from-blue-100 dark:via-purple-100 dark:to-indigo-200 font-light tracking-wide">
+          <p className="mt-6 text-lg md:text-xl px-4 bg-clip-text text-transparent bg-gradient-to-r from-neutral-800 via-neutral-700 to-neutral-800 dark:from-blue-100 dark:via-purple-100 dark:to-indigo-200 font-light tracking-wide">
             Create stunning AI-powered images with just a few clicks.
             Your imagination is the only limit.
           </p>

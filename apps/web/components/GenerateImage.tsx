@@ -42,23 +42,23 @@ export function GenerateImage() {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center py-6">
-            <div className="p-6 rounded-xl shadow-lg w-[500px] transition-transform duration-300 ease-in-out focus-within:scale-105">
+        <div className="w-full max-w-3xl mx-auto p-4">
+            <div className="space-y-4">
                 <SelectModel selectedModel={selectedModel} setSelectedModel={setSelectedModel} />
                 <Textarea 
                     value={prompt} 
                     onChange={(e) => setPrompt(e.target.value)} 
                     placeholder="Describe your image..." 
-                    className="mt-4 p-3 text-lg w-full rounded-md border border-gray-600 focus:border-blue-400 outline-none transition-all duration-300 ease-in-out focus:shadow-lg focus:scale-105"
+                    className="mt-4 p-3 text-base md:text-lg w-full rounded-md border border-gray-600 focus:border-blue-400 outline-none transition-all duration-300 ease-in-out focus:shadow-lg focus:scale-105"
                 />
                 <Button onClick={handleGenerate} className="mt-4 w-full py-2 rounded-lg transition-transform duration-300 ease-in-out hover:scale-105">
                     Generate
                 </Button>
             </div>
             {images.length > 0 && (
-                <div className="grid grid-cols-2 gap-4 mt-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
                     {images.map((img, index) => (
-                        <img key={index} src={img} alt="Generated" className="rounded-lg w-40 h-40 object-cover" />
+                        <img key={index} src={img} alt="Generated" className="rounded-lg w-full h-40 object-cover" />
                     ))}
                 </div>
             )}

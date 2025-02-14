@@ -42,15 +42,18 @@ export function Camera() {
     }, [images]);
   
     return (
-      <div className="grid md:grid-cols-4 grid-cols-1 gap-2 pt-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 pt-0 px-4">
         {images.map((image, index) => (
-          <ImageCard key={index} index={index} hovered={hovered} setHovered={setHovered} 
-           {...image} />
+          <ImageCard 
+            key={index} 
+            index={index} 
+            hovered={hovered} 
+            setHovered={setHovered} 
+            {...image} 
+          />
         ))}
         {imagesLoading && (
           <>
-            <ImageCardSkeleton />
-            <ImageCardSkeleton />
             <ImageCardSkeleton />
             <ImageCardSkeleton />
             <ImageCardSkeleton />

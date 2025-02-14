@@ -37,64 +37,53 @@ export function SelectModel({setSelectedModel, selectedModel}: {
     }, [])
 
     return (
-        <div className="w-full max-w-7xl mx-auto px-4 py-8">
-            <motion.h1 
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-4xl bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent text-center mb-12 font-sans font-bold"
-            >
-                Select Model
-            </motion.h1>
-
-            <div>
+        <div className="w-full max-w-3xl mx-auto p-4">
+            <div className="space-y-4">
                 {modelLoading ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {[1, 2, 3].map((i) => (
-                            <Skeleton key={i} className="h-[300px] w-full rounded-xl" />
-                        ))}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                        <Skeleton className="h-40" />
+                        <Skeleton className="h-40" />
+                        <Skeleton className="h-40" />
                     </div>
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {models
-                                .filter(model => model.trainingStatus === "Generated")
-                                .map(model => (
-                                    <motion.div
-                                        key={model.id}
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                        whileHover={{ scale: 1.02 }}
-                                        transition={{ duration: 0.2 }}
-                                        className={`
-                                            group cursor-pointer rounded-xl overflow-hidden
-                                            bg-gradient-to-b from-gray-900/50 to-gray-900/30
-                                            backdrop-blur-sm
-                                            ${selectedModel === model.id 
-                                                ? 'ring-2 ring-blue-500 border-transparent' 
-                                                : 'border border-gray-700/50 hover:border-blue-500/50'}
-                                            hover:shadow-2xl hover:shadow-blue-500/10
-                                            transition-all duration-300
-                                        `}
-                                        onClick={() => setSelectedModel(model.id)}
-                                    >
-                                        <div className="aspect-[16/10] relative overflow-hidden">
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
-                                            <Image
-                                                src={model.thumbnail}
-                                                alt={model.name}
-                                                fill
-                                                className="object-cover transform group-hover:scale-105 transition-transform duration-300"
-                                            />
-                                        </div>
-                                        <div className="p-4 relative z-20">
-                                            <h3 className="text-lg font-medium bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent group-hover:from-blue-200 group-hover:to-blue-100 transition-all duration-300">
-                                                {model.name}
-                                            </h3>
-                                            <div className="h-0.5 w-0 group-hover:w-full bg-gradient-to-r from-blue-500 to-purple-500 mt-2 transition-all duration-300" />
-                                        </div>
-                                    </motion.div>
-                                ))
-                            }
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            {models.map((model) => (
+                                <motion.div
+                                    key={model.id}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    whileHover={{ scale: 1.02 }}
+                                    transition={{ duration: 0.2 }}
+                                    className={`
+                                        group cursor-pointer rounded-xl overflow-hidden
+                                        bg-gradient-to-b from-gray-900/50 to-gray-900/30
+                                        backdrop-blur-sm
+                                        ${selectedModel === model.id 
+                                            ? 'ring-2 ring-blue-500 border-transparent' 
+                                            : 'border border-gray-700/50 hover:border-blue-500/50'}
+                                        hover:shadow-2xl hover:shadow-blue-500/10
+                                        transition-all duration-300
+                                    `}
+                                    onClick={() => setSelectedModel(model.id)}
+                                >
+                                    <div className="aspect-[16/10] relative overflow-hidden">
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                                        <Image
+                                            src={model.thumbnail}
+                                            alt={model.name}
+                                            fill
+                                            className="object-cover transform group-hover:scale-105 transition-transform duration-300"
+                                        />
+                                    </div>
+                                    <div className="p-4 relative z-20">
+                                        <h3 className="text-lg font-medium bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent group-hover:from-blue-200 group-hover:to-blue-100 transition-all duration-300">
+                                            {model.name}
+                                        </h3>
+                                        <div className="h-0.5 w-0 group-hover:w-full bg-gradient-to-r from-blue-500 to-purple-500 mt-2 transition-all duration-300" />
+                                    </div>
+                                </motion.div>
+                            ))}
                         </div>
                         
                         {models.find(x => x.trainingStatus !== "Generated") && (
