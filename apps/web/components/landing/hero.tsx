@@ -22,7 +22,7 @@ export default function Hero() {
   const router = useRouter();
   return (
     <>
-      <section className="min-h-[43rem] relative overflow-y-hidden max-h-fit">
+      <section className="min-h-[43rem] px-4 md:px-0 relative overflow-y-hidden max-h-fit">
         <div className="flex items-center justify-start py-20 flex-col  w-full h-full">
           <Badge
             variant={"outline"}
@@ -91,8 +91,8 @@ export default function Hero() {
           <div className="overflow-hidden flex items-start justify-center w-full relative">
             <RotatingPeople />
 
-            <div className="bg-muted/30 backdrop-blur-xl flex items-center justify-center absolute p-6 -bottom-[128px] left-1/2 -translate-x-1/2 size-[24rem] rounded-full">
-              <div className="bg-accent backdrop-blur-xl font-secondary w-full h-full text-foreground flex flex-col py-14 gap-4 items-center font-semibold text-6xl rounded-full">
+            <div className="bg-muted/30 border-[4px] border-white/60 dark:border-white/10 backdrop-blur-xl flex items-center justify-center absolute p-6 -bottom-[128px] left-1/2 -translate-x-1/2 size-[24rem] rounded-full">
+              <div className="bg-white/60 dark:bg-white/5 backdrop-blur-xl font-secondary w-full h-full text-foreground flex flex-col py-14 gap-4 items-center font-semibold text-6xl rounded-full">
                 <div className="flex items-center shadow-lg shadow-primary bg-primary p-4 rounded-xl w-fit gap-2">
                   <Sparkle weight="fill" className="size-10 text-white" />
                 </div>

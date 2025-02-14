@@ -8,25 +8,29 @@ import {
 export const features = [
   {
     icon: Aperture,
+    badgeText: "100% Quality",
     title: "Professional Quality",
     description: "Studio-grade portraits generated in seconds",
     gradient: "from-blue-500 to-purple-500",
   },
   {
     icon: MagicWand,
-    title: "Magic Editing",
+    badgeText: "20+ Models",
+    title: "Advanced AI tools to perfect every detail",
     description: "Advanced AI tools to perfect every detail",
     gradient: "from-purple-500 to-pink-500",
   },
   {
     icon: Users,
-    title: "Family Collections",
+    badgeText: "100k+ happy users",
+    title: "Create stunning portraits for the whole family",
     description: "Create stunning portraits for the whole family",
     gradient: "from-pink-500 to-red-500",
   },
   {
     icon: Clock,
-    title: "Instant Delivery",
+    badgeText: "Results in<10s",
+    title: "Get your photos in minutes, not days",
     description: "Get your photos in minutes, not days",
     gradient: "from-red-500 to-orange-500",
   },

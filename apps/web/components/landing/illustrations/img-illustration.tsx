@@ -8,8 +8,8 @@ export default function ImgIllustration() {
   ];
   return (
     <>
-      <div className="flex items-center -space-x-4 h-full mt-0 md:mt-4">
-        <div className="w-8 md:w-11 -rotate-[10deg] border-2 md:border-[3px] border-white overflow-hidden rounded-md md:rounded-lg h-[70%]">
+      <div className="flex items-center group hover:-space-x-5 -space-x-4 h-full mt-0 md:mt-4">
+        <div className="w-8 md:w-11 transition-all duration-300 group-hover:-rotate-[4deg] -rotate-[10deg] border-2 md:border-[3px] border-white overflow-hidden rounded-md md:rounded-lg h-[70%]">
           <img
             src={IMAGES[0]}
             alt="img-illustration-1"
@@ -18,7 +18,7 @@ export default function ImgIllustration() {
             height={100}
           />
         </div>
-        <div className="shadow-xl w-8 md:w-11 border-2 md:border-[3px] border-white z-20 rounded-md md:rounded-lg overflow-hidden h-[70%]">
+        <div className="shadow-xl w-8 transition-all duration-300 md:w-11 border-2 md:border-[3px] border-white z-20 rounded-md md:rounded-lg overflow-hidden h-[70%]">
           <img
             src={IMAGES[1]}
             alt="img-illustration-2"
@@ -27,7 +27,7 @@ export default function ImgIllustration() {
             height={100}
           />
         </div>
-        <div className="w-8 md:w-11 rotate-[10deg] border-2 md:border-[3px] border-white overflow-hidden rounded-md md:rounded-lg h-[70%]">
+        <div className="w-8 md:w-11 transition-all duration-300 group-hover:rotate-[4deg] rotate-[10deg] border-2 md:border-[3px] border-white overflow-hidden rounded-md md:rounded-lg h-[70%]">
           <img
             src={IMAGES[2]}
             alt="img-illustration-3"
