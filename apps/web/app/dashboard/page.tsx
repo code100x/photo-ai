@@ -47,19 +47,15 @@ export default function Dashboard() {
     setActiveTab(value);
   };
 
+
   const activeContent = items.find((item) => item.value === activeTab)?.content;
 
   return (
-    <div className="relative flex flex-col items-center w-full min-h-screen pt-[88px]">
-      {/* Content container with padding for the dock */}
-      <div className="flex-1 w-full max-w-6xl p-4 pb-24 overflow-y-auto">
-        <div className="relative">
-          {activeContent}
-        </div>
-      </div>
+    <div className="flex flex-col items-center w-full min-h-screen">
+     
+      <div className="flex-1 w-full max-w-6xl pt-32">{activeContent}</div>
 
-      {/* Floating Dock */}
-      <div className="fixed bottom-0 left-0 w-full flex justify-center bg-background/80 backdrop-blur-sm z-[90] pb-safe">
+      <div className="fixed bottom-0 left-0 w-full flex justify-center">
         <div className="w-full max-w-6xl flex justify-center">
           <TabDock
             items={items.map(({ content, ...rest }) => rest)} 

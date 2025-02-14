@@ -36,7 +36,7 @@ export const FileUpload = ({
 
   const handleFileChange = (newFiles: File[]) => {
     const imageFiles = newFiles.filter(
-      file => file.type.startsWith('image/') // Accept any image type
+      file => file.type.startsWith('image/') 
     );
     if (newFiles.length !== imageFiles.length) {
       toast.error("Please upload only image files");
@@ -91,8 +91,8 @@ export const FileUpload = ({
           ref={fileInputRef}
           id="file-upload-handle"
           type="file"
-          accept="image/*" // Changed to accept all image types
-          multiple // Allow multiple images
+          accept="image/*" 
+          multiple 
           onChange={(e) => handleFileChange(Array.from(e.target.files || []))}
           className="hidden"
         />
