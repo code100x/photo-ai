@@ -10,7 +10,7 @@ export function Camera() {
     const [imagesLoading, setImagesLoading] = useState(true);
     const { getToken } = useAuth();
   
-    const [hovered, setHovered] = useState<number | null>(null); // ✅ Add these states
+    const [hovered, setHovered] = useState<number | null>(null);
   
     useEffect(() => {
       (async () => {

@@ -4,6 +4,7 @@ import { useAuth } from "@clerk/nextjs"
 import axios from "axios";
 import { Skeleton } from "./ui/skeleton";
 import { BACKEND_URL } from "@/app/config";
+import Image from "next/image";
 
 interface TModel {
     id: string;
@@ -35,7 +36,7 @@ export function SelectModel({setSelectedModel, selectedModel}: {
     }, [])
 
     return <>
-        <div className="text-2xl max-w-4xl">
+        <div className="text-4xl text-blue-500 text-center max-w-4xl font-sans font-bold">
             Select Model
         </div>
 
@@ -46,7 +47,8 @@ export function SelectModel({setSelectedModel, selectedModel}: {
             }}>
                     <div className="flex justify-between flex-col h-full">
                         <div>
-                            <img src={model.thumbnail} className="rounded" />
+                            <Image alt="thumbnail"
+                            src={model.thumbnail} className="rounded" />
                         </div>
                         <div className="pt-8">
                             {model.name}

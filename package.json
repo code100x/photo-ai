@@ -21,6 +21,8 @@
     "packages/*"
   ],
   "dependencies": {
-    "framer-motion": "^12.4.2"
+    "framer-motion": "^12.4.2",
+    "react-spinners": "^0.15.0",
+    "react-toastify": "^11.0.3"
   }
 }

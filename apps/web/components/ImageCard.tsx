@@ -43,7 +43,7 @@ export const ImageCard = React.memo(
   }
 );
 
-// Skeleton for loading state
+
 export function ImageCardSkeleton() {
   return (
     <div className="rounded-xl border-2 max-w-[400px] p-2 cursor-pointer w-full">

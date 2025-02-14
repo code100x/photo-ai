@@ -14,7 +14,7 @@ import {
 } from "framer-motion";
 import * as React from "react";
 import { 
-  Menu as MenuIcon  // Add this import
+  Menu as MenuIcon  
 } from "lucide-react";
 
 const TabDock = React.forwardRef<

@@ -28,16 +28,16 @@ export default function BackgroundSlider() {
     <div className="absolute inset-0 overflow-hidden">
         
       <motion.div
-        className="grid grid-cols-6 grid-rows-4 gap-8 absolute inset-0" // Creates the grid effect
-        initial={{ x: "100%", y: "100%" }} // Starts from bottom-right
-        animate={{ x: "-100%", y: "-100%" }} // Moves to top-left
+        className="grid grid-cols-6 grid-rows-4 gap-8 absolute inset-0" 
+        initial={{ x: "100%", y: "100%" }} 
+        animate={{ x: "-100%", y: "-100%" }}
         transition={{
           repeat: Infinity,
           ease: "linear",
-          duration: 30, // Adjust speed
+          duration: 30,
         }}
       >
-        {/* Repeat images to fill grid */}
+
         {images.concat(images).map((src, index) => (
           <div key={index} className="relative w-full h-full">
             <Image

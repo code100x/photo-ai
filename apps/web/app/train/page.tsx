@@ -38,7 +38,7 @@ export default function Train() {
     const router = useRouter();
 
     async function trainModal() {
-        // Add type here
+     
         const input = {
             zipUrl,
             type,

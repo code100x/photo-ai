@@ -13,7 +13,6 @@ import {
   Brain as BrainIcon,
 } from "lucide-react";
 
-// Define tabs with content
 const items = [
   {
     title: "Camera",
@@ -49,7 +48,7 @@ export default function Dashboard() {
     setActiveTab(value);
   };
 
-  // Get the active content
+
   const activeContent = items.find((item) => item.value === activeTab)?.content;
 
   return (
@@ -61,7 +60,7 @@ export default function Dashboard() {
       <div className="fixed bottom-0 left-0 w-full flex justify-center">
         <div className="w-full max-w-6xl flex justify-center">
           <TabDock
-            items={items.map(({ content, ...rest }) => rest)} // Prevent content from passing into TabDock
+            items={items.map(({ content, ...rest }) => rest)} 
             defaultValue="camera"
             value={activeTab}
             onValueChange={handleTabChange}
