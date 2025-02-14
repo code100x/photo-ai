@@ -12,10 +12,13 @@ export interface TImage {
 
 export const ImageCard = React.memo(
   function ImageCard({
+    id,
+    status,
+    imageUrl,
     index,
     hovered,
     setHovered,
-  }: {
+  }: TImage & {
     index: number;
     hovered: number | null;
     setHovered: React.Dispatch<React.SetStateAction<number | null>>;
@@ -29,7 +32,7 @@ export const ImageCard = React.memo(
           hovered !== null && hovered !== index && "blur-sm scale-[0.98]"
         )}
       >
-        <div className="absolute inset-0" />
+        <img src={imageUrl} alt={`Image ${id}`} className="absolute inset-0 w-full h-full object-cover" />
 
         <div
           className={cn(
@@ -37,6 +40,7 @@ export const ImageCard = React.memo(
             hovered === index ? "opacity-100" : "opacity-0"
           )}
         >
+          <div className="text-white">Status: {status}</div>
         </div>
       </div>
     );

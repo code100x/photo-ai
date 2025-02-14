@@ -1,16 +1,36 @@
+"use client";
+
 import { BACKEND_URL } from "@/app/config";
 import { PackCard, TPack } from "./PackCard";
 import axios from "axios";
 import { PacksClient } from "./PacksClient";
+import { useEffect, useState } from "react";
+import { Skeleton } from "./ui/skeleton";
 
-async function getPacks(): Promise<TPack[]> {
-    const res = await axios.get(`${BACKEND_URL}/pack/bulk`)
-    return res.data.packs ?? [];
-}
+export function Packs() {
+    const [packs, setPacks] = useState<TPack[]>([]);
+    const [loading, setLoading] = useState(true);
 
-export async function Packs() {
-    const packs = await getPacks();
+    useEffect(() => {
+        async function fetchPacks() {
+            try {
+                const res = await axios.get(`${BACKEND_URL}/pack/bulk`);
+                setPacks(res.data.packs ?? []);
+            } catch (error) {
+                console.error('Failed to fetch packs:', error);
+            } finally {
+                setLoading(false);
+            }
+        }
 
-    return <PacksClient packs={packs} />
-    
+        fetchPacks();
+    }, []);
+
+    if (loading) {
+        return <div className="flex justify-center items-center h-screen">
+            <Skeleton>  </Skeleton>
+        </div>
+    }
+
+    return <PacksClient packs={packs} />;
 }

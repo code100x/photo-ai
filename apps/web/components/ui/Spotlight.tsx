@@ -24,11 +24,15 @@ export const Spotlight = ({ className, fill }: SpotlightProps) => {
           rx="1924.71"
           ry="273.501"
           transform="matrix(-0.822377 -0.568943 -0.568943 0.822377 3631.88 2291.09)"
-          fill={fill || "white"}
-          fillOpacity="0.21"
+          fill="url(#gradient)"
+          fillOpacity="0.35"
         ></ellipse>
       </g>
       <defs>
+        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style={{ stopColor: fill || '#4F46E5', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: fill || '#9333EA', stopOpacity: 0.5 }} />
+        </linearGradient>
         <filter
           id="filter"
           x="0.860352"
@@ -46,7 +50,7 @@ export const Spotlight = ({ className, fill }: SpotlightProps) => {
             result="shape"
           ></feBlend>
           <feGaussianBlur
-            stdDeviation="151"
+            stdDeviation="120"
             result="effect1_foregroundBlur_1065_8"
           ></feGaussianBlur>
         </filter>

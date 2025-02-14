@@ -5,6 +5,7 @@ import axios from "axios";
 import { Skeleton } from "./ui/skeleton";
 import { BACKEND_URL } from "@/app/config";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 interface TModel {
     id: string;
@@ -35,35 +36,78 @@ export function SelectModel({setSelectedModel, selectedModel}: {
         })()
     }, [])
 
-    return <>
-        <div className="text-4xl text-blue-500 text-center max-w-4xl font-sans font-bold">
-            Select Model
-        </div>
+    return (
+        <div className="w-full max-w-7xl mx-auto px-4 py-8">
+            <motion.h1 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-4xl bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent text-center mb-12 font-sans font-bold"
+            >
+                Select Model
+            </motion.h1>
 
-        <div className="max-w-2xl">
-            <div className="grid grid-cols-3 gap-2 p-2">
-            {models.filter(model => model.trainingStatus === "Generated").map(model => <div className={`${selectedModel === model.id ? "border-red-300" : ""} cursor-pointer rounded border p-2 w-full`} onClick={() => {
-                setSelectedModel(model.id);
-            }}>
-                    <div className="flex justify-between flex-col h-full">
-                        <div>
-                            <Image alt="thumbnail"
-                            src={model.thumbnail} className="rounded" />
-                        </div>
-                        <div className="pt-8">
-                            {model.name}
-                        </div>
+            <div>
+                {modelLoading ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[1, 2, 3].map((i) => (
+                            <Skeleton key={i} className="h-[300px] w-full rounded-xl" />
+                        ))}
                     </div>
-                </div>)}
+                ) : (
+                    <>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {models
+                                .filter(model => model.trainingStatus === "Generated")
+                                .map(model => (
+                                    <motion.div
+                                        key={model.id}
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        whileHover={{ scale: 1.02 }}
+                                        transition={{ duration: 0.2 }}
+                                        className={`
+                                            group cursor-pointer rounded-xl overflow-hidden
+                                            bg-gradient-to-b from-gray-900/50 to-gray-900/30
+                                            backdrop-blur-sm
+                                            ${selectedModel === model.id 
+                                                ? 'ring-2 ring-blue-500 border-transparent' 
+                                                : 'border border-gray-700/50 hover:border-blue-500/50'}
+                                            hover:shadow-2xl hover:shadow-blue-500/10
+                                            transition-all duration-300
+                                        `}
+                                        onClick={() => setSelectedModel(model.id)}
+                                    >
+                                        <div className="aspect-[16/10] relative overflow-hidden">
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10" />
+                                            <Image
+                                                src={model.thumbnail}
+                                                alt={model.name}
+                                                fill
+                                                className="object-cover transform group-hover:scale-105 transition-transform duration-300"
+                                            />
+                                        </div>
+                                        <div className="p-4 relative z-20">
+                                            <h3 className="text-lg font-medium bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent group-hover:from-blue-200 group-hover:to-blue-100 transition-all duration-300">
+                                                {model.name}
+                                            </h3>
+                                            <div className="h-0.5 w-0 group-hover:w-full bg-gradient-to-r from-blue-500 to-purple-500 mt-2 transition-all duration-300" />
+                                        </div>
+                                    </motion.div>
+                                ))
+                            }
+                        </div>
+                        
+                        {models.find(x => x.trainingStatus !== "Generated") && (
+                            <div className="mt-8 text-center">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-900/50 backdrop-blur-sm border border-gray-700/50">
+                                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent"></div>
+                                    <span className="text-gray-300">More models are being trained...</span>
+                                </div>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
-
-            {models.find(x => x.trainingStatus !== "Generated") && "More models are being trained..."}
-
-            {modelLoading && <div className="flex gap-2 p-4">
-                <Skeleton className="h-60 w-full rounded" />
-                <Skeleton className="h-60 w-full rounded" />
-                <Skeleton className="h-60 w-full rounded" />    
-            </div>}
         </div>
-    </>
+    );
 }

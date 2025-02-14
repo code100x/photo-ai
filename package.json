@@ -21,7 +21,9 @@
     "packages/*"
   ],
   "dependencies": {
+    "@tabler/icons-react": "^3.30.0",
     "framer-motion": "^12.4.2",
+    "react-dropzone": "^14.3.5",
     "react-spinners": "^0.15.0",
     "react-toastify": "^11.0.3"
   }

@@ -21,6 +21,22 @@ const images = [
   "/16.jpg",
   "/17.jpg",
   "/18.jpg",
+  "/19.jpg",
+  "/20.jpg",
+  "/21.jpg",
+  "/22.jpg",
+  "/23.jpg",
+  "/24.jpg",
+  "/25.jpg",
+  "/26.jpg",
+  "/27.jpg",
+  "/28.jpg",
+  "/29.jpg",
+  "/30.jpg",
+  "/31.jpg",
+  "/32.jpg",
+  
+  
 ];
 
 export default function BackgroundSlider() {
@@ -28,7 +44,7 @@ export default function BackgroundSlider() {
     <div className="absolute inset-0 overflow-hidden">
         
       <motion.div
-        className="grid grid-cols-6 grid-rows-4 gap-8 absolute inset-0" 
+        className="grid grid-cols-8 grid-rows-5 gap-8 absolute inset-0" 
         initial={{ x: "100%", y: "100%" }} 
         animate={{ x: "-100%", y: "-100%" }}
         transition={{

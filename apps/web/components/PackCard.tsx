@@ -27,8 +27,8 @@ export function PackCard(props: TPack & {selectedModelId: string}) {
         })
     }}>
         <div className="flex p-4 gap-4">
-            <img src={props.imageUrl1} width="50%" className=" rounded" />
-            <img src={props.imageUrl2} width="50%" className=" rounded"/>
+            <img key={`${props.id}-1`} src={props.imageUrl1} width="50%" className="rounded" alt={`${props.name} - Image 1`} />
+            <img key={`${props.id}-2`} src={props.imageUrl2} width="50%" className="rounded" alt={`${props.name} - Image 2`} />
         </div>
 
         <div className="text-xl font-bold pb-2">

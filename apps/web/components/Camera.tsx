@@ -14,12 +14,17 @@ export function Camera() {
   
     useEffect(() => {
       (async () => {
-        const token = await getToken();
-        const response = await axios.get(`${BACKEND_URL}/image/bulk`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setImages(response.data.images);
-        setImagesLoading(false);
+        try {
+          const token = await getToken();
+          const response = await axios.get(`${BACKEND_URL}/image/bulk`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          setImages(response.data.images);
+        } catch (error) {
+          console.error('Failed to fetch images:', error);
+        } finally {
+          setImagesLoading(false);
+        }
       })();
     }, []);
   

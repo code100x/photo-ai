@@ -1,6 +1,5 @@
-
-"use client"
-import { useRef, useState} from 'react'
+"use client";
+import { useRef, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import * as TabsPrimitive from "@radix-ui/react-tabs";
@@ -13,14 +12,17 @@ import {
   useTransform,
 } from "framer-motion";
 import * as React from "react";
-import { 
-  Menu as MenuIcon  
-} from "lucide-react";
+import { Menu as MenuIcon } from "lucide-react";
 
 const TabDock = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> & {
-    items: { title: string; icon: React.ReactNode; value: string; content: React.ReactNode }[];
+    items: {
+      title: string;
+      icon: React.ReactNode;
+      value: string;
+      content: React.ReactNode;
+    }[];
     desktopClassName?: string;
     mobileClassName?: string;
   }
@@ -43,11 +45,16 @@ const TabDockMobile = ({
   items,
   className,
 }: {
-  items: { title: string; icon: React.ReactNode; value: string; content: React.ReactNode }[];
+  items: {
+    title: string;
+    icon: React.ReactNode;
+    value: string;
+    content: React.ReactNode;
+  }[];
   className?: string;
 }) => {
   const [open, setOpen] = useState(false);
-  
+
   return (
     <TabsPrimitive.List className={cn("relative block md:hidden", className)}>
       <AnimatePresence>
@@ -92,11 +99,16 @@ const TabDockDesktop = ({
   items,
   className,
 }: {
-  items: { title: string; icon: React.ReactNode; value: string; content: React.ReactNode }[];
+  items: {
+    title: string;
+    icon: React.ReactNode;
+    value: string;
+    content: React.ReactNode;
+  }[];
   className?: string;
 }) => {
   const mouseX = useMotionValue(Infinity);
-  
+
   return (
     <TabsPrimitive.List
       onMouseMove={(e) => mouseX.set(e.pageX)}
@@ -107,11 +119,7 @@ const TabDockDesktop = ({
       )}
     >
       {items.map((item) => (
-        <TabTriggerContainer
-          mouseX={mouseX}
-          key={item.value}
-          {...item}
-        />
+        <TabTriggerContainer mouseX={mouseX} key={item.value} {...item} />
       ))}
     </TabsPrimitive.List>
   );
@@ -136,10 +144,18 @@ function TabTriggerContainer({
     return val - bounds.x - bounds.width / 2;
   });
 
-  const widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  const heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  const widthTransformIcon = useTransform(distance, [-150, 0, 150], [20, 40, 20]);
-  const heightTransformIcon = useTransform(distance, [-150, 0, 150], [20, 40, 20]);
+  const widthTransform = useTransform(distance, [-150, 0, 150], [40, 50, 40]);
+  const heightTransform = useTransform(distance, [-150, 0, 150], [40, 50, 40]);
+  const widthTransformIcon = useTransform(
+    distance,
+    [-150, 0, 150],
+    [20, 25, 20]
+  );
+  const heightTransformIcon = useTransform(
+    distance,
+    [-150, 0, 150],
+    [20, 25, 20]
+  );
 
   const width = useSpring(widthTransform, {
     mass: 0.1,
@@ -163,10 +179,7 @@ function TabTriggerContainer({
   });
 
   return (
-    <TabsPrimitive.Trigger
-      value={value}
-      className="focus-visible:outline-none"
-    >
+    <TabsPrimitive.Trigger value={value} className="focus-visible:outline-none">
       <motion.div
         ref={ref}
         style={{ width, height }}
@@ -197,8 +210,15 @@ function TabTriggerContainer({
   );
 }
 
-const TabsContent = ({ items }: { 
-  items: { title: string; icon: React.ReactNode; value: string; content: React.ReactNode }[] 
+const TabsContent = ({
+  items,
+}: {
+  items: {
+    title: string;
+    icon: React.ReactNode;
+    value: string;
+    content: React.ReactNode;
+  }[];
 }) => {
   return (
     <>
