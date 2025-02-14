@@ -1,25 +1,55 @@
+import { cn } from "@/lib/utils";
+import React from "react";
 import { Skeleton } from "./ui/skeleton";
+
 
 export interface TImage {
     id: string;
     status: string;
     imageUrl: string;
-}
+  }
+  
 
-const DEFAULT_BLUR_IMAGE = "https://static.vecteezy.com/system/resources/thumbnails/016/894/217/small/white-background-white-polished-metal-abstract-white-gradient-background-blurred-white-backdrop-illustration-vector.jpg";
+export const ImageCard = React.memo(
+  function ImageCard({
+    index,
+    hovered,
+    setHovered,
+  }: {
+    index: number;
+    hovered: number | null;
+    setHovered: React.Dispatch<React.SetStateAction<number | null>>;
+  }) {
+    return (
+      <div
+        onMouseEnter={() => setHovered(index)}
+        onMouseLeave={() => setHovered(null)}
+        className={cn(
+          "rounded-lg relative bg-gray-100 dark:bg-neutral-900 overflow-hidden h-60 md:h-96 w-full transition-all duration-300 ease-out",
+          hovered !== null && hovered !== index && "blur-sm scale-[0.98]"
+        )}
+      >
+        <div className="absolute inset-0" />
 
-export function ImageCard(props: TImage) {
-    return <div className="border rounded-xl border-2 max-w-[400px] cursor-pointer">
-        <div className="flex p-4 gap-4">
-            {props.status === "Generated" ? <img src={props.imageUrl} className="rounded" /> : <img src={DEFAULT_BLUR_IMAGE} />}
+        <div
+          className={cn(
+            "absolute inset-0 bg-black/50 flex items-end py-8 px-4 transition-opacity duration-300",
+            hovered === index ? "opacity-100" : "opacity-0"
+          )}
+        >
         </div>
-    </div>
-}
+      </div>
+    );
+  }
+);
 
+// Skeleton for loading state
 export function ImageCardSkeleton() {
-    return <div className="border rounded-xl border-2 max-w-[400px] p-2 cursor-pointer w-full">
-        <div className="flex p-4 gap-4">
-            <Skeleton className="rounded h-40 w-[300px]" />
-        </div>
+  return (
+    <div className="rounded-xl border-2 max-w-[400px] p-2 cursor-pointer w-full">
+      <div className="flex p-4 gap-4">
+        <Skeleton className="rounded h-40 w-[300px]" />
+      </div>
     </div>
+  );
 }

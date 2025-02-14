@@ -1,28 +1,50 @@
-import { GenerateImage } from "@/components/GenerateImage"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { GenerateImage } from "@/components/GenerateImage";
+import { TabDock } from "@/components/ui/tabs";
 import { Train } from "@/components/Train";
 import { Packs } from "@/components/Packs";
 import { Camera } from "@/components/Camera";
- 
-export default function Dashbaord() {
-   return <div className="flex justify-center">
-    <div className="max-w-6xl">
+import { Camera as CameraIcon, Image as ImageIcon, Package as PackageIcon, Brain as BrainIcon } from "lucide-react";
+
+export default function Dashboard() {
+  const items = [
+    {
+      title: "Camera",
+      icon: <CameraIcon className="h-full w-full" />,
+      value: "camera",
+      content: <Camera />
+    },
+    {
+      title: "Generate Image",
+      icon: <ImageIcon className="h-full w-full" />,
+      value: "generate",
+      content: <GenerateImage />
+    },
+    {
+      title: "Packs",
+      icon: <PackageIcon className="h-full w-full" />,
+      value: "packs",
+      content: <Packs />
+    },
+    {
+      title: "Train a model",
+      icon: <BrainIcon className="h-full w-full" />,
+      value: "train",
+      content: <Train />
+    }
+  ];
+
+  return (
+    <div className="flex justify-center">
+      <div className="max-w-6xl w-full">
         <div className="flex justify-center">
-            <Tabs defaultValue="camera">
-                <div className="flex justify-center">
-                    <TabsList className="m-4 p-4">
-                        <TabsTrigger value="camera">Camera</TabsTrigger>
-                        <TabsTrigger value="generate">Generate Image</TabsTrigger>
-                        <TabsTrigger value="packs">Packs</TabsTrigger>
-                        <TabsTrigger value="train">Train a modal </TabsTrigger>
-                    </TabsList>
-                </div>
-                <TabsContent value="generate"><GenerateImage /></TabsContent>
-                <TabsContent value="train"><Train /></TabsContent>
-                <TabsContent value="packs"><Packs /></TabsContent>
-                <TabsContent value="camera"><Camera /></TabsContent>
-            </Tabs>
+          <TabDock 
+            items={items}
+            defaultValue="camera"
+            desktopClassName="m-4"
+            mobileClassName="m-4"
+          />
         </div>
+      </div>
     </div>
-   </div>
+  );
 }
