@@ -3,6 +3,7 @@ import { ArrowUpRight, Medal } from "@phosphor-icons/react/dist/ssr";
 import { FlickeringGrid } from "../magicui/flickering-grid";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
+import { Cube } from "@phosphor-icons/react/dist/ssr";
 
 export default function Features() {
   return (
@@ -60,7 +61,8 @@ export default function Features() {
                 </div>
               </div>
               <Badge className="z-[40] transition-all p-2 rounded-lg px-4 duration-500 cursor-pointer hover:bg-muted/80 text-foreground bg-accent">
-                {feature.badgeText} <ArrowUpRight weight="bold" />
+                {feature.badgeText}{" "}
+                <Cube weight="fill" className="ml-2 size-4" />
               </Badge>
               <div className="transition-all duration-700 opacity-0 group-hover:opacity-100 bottom-[-10rem] md:bottom-[-10rem] right-[0%] z-[-1] absolute bg-gradient-to-t  from-primary to-purple-900/20 blur-[8em] rounded-xl  ease-out size-[12rem] dark:md:size-[25rem] "></div>
               <div className="transition-all duration-700 opacity-0 group-hover:opacity-100 top-[-10rem] md:top-[-10rem] left-[-20%] z-[10] absolute bg-gradient-to-t  from-background to-background/90 blur-[4em] rounded-full ease-out size-[12rem] dark:md:size-[30rem] "></div>

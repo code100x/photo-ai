@@ -29,7 +29,7 @@ export const features = [
   },
   {
     icon: Clock,
-    badgeText: "Results in<10s",
+    badgeText: "Results in <10s",
     title: "Get your photos in minutes, not days",
     description: "Get your photos in minutes, not days",
     gradient: "from-red-500 to-orange-500",
