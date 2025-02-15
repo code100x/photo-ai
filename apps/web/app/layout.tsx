@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { Figtree, Instrument_Serif, Manrope } from "next/font/google";
+import { Instrument_Serif, Manrope } from "next/font/google";
 import "./globals.css";
 import { Appbar } from "@/components/Appbar";
 import { Providers } from "@/components/providers/Providers";
-import { Footer } from "@/components/Footer";
+import Footer from "@/components/landing/footer";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  weight: ["300", "400", "500", "600", "700"],
 });
 
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
+const instrumental_serif = Instrument_Serif({
+  subsets: ["latin"],
+  variable: "--font-instrumental-serif",
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
@@ -36,7 +38,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans antialiased`}
+        className={`${manrope.variable} ${instrumental_serif.variable} min-h-screen bg-background font-sans antialiased`}
       >
         <Providers>
           <div className="relative flex min-h-screen flex-col">
