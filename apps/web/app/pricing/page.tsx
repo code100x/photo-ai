@@ -1,9 +1,11 @@
 "use client";
+
 import { useState } from "react";
 import { PlanCard } from "@/components/subscription/PlanCard";
 import { PaymentModal } from "@/components/subscription/PaymentModal";
 import { PlanType } from "@/types";
 import { usePayment } from "@/hooks/usePayment";
+import { motion } from "framer-motion";
 
 export default function SubscriptionPage() {
   const [selectedPlan, setSelectedPlan] = useState<{
@@ -54,42 +56,52 @@ export default function SubscriptionPage() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-center mb-4">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 ">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="max-w-4xl text-center"
+      >
+        <h1 className="text-4xl font-extrabold tracking-tight mb-4 text-gray-900 dark:text-white">
           Choose Your Plan
         </h1>
-        <p className="text-muted-foreground text-center mb-8">
-          Select a plan that best fits your needs. All plans include access to
+        <p className="text-lg text-gray-600 dark:text-gray-400">
+          Find the perfect plan for your needs. Every plan includes access to
           our core features.
         </p>
+      </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {plans.map((plan) => (
-            <PlanCard
-              key={plan.type}
-              plan={{
-                type: plan.type,
-                name: plan.name,
-                price: plan.price,
-                credits: plan.credits,
-                features: [...plan.features],
-              }}
-              onSelect={(isAnnual) => handlePlanSelect(plan.type, isAnnual)}
-            />
-          ))}
-        </div>
-
-        {selectedPlan && (
-          <PaymentModal
-            plan={selectedPlan.plan}
-            isAnnual={selectedPlan.isAnnual}
-            onClose={() => setSelectedPlan(null)}
-            onPaymentSubmit={handlePaymentSubmit}
-            loading={loading}
+      <motion.div
+        className="grid md:grid-cols-2 gap-8 mt-10"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.4, delay: 0.2 }}
+      >
+        {plans.map((plan) => (
+          <PlanCard
+            key={plan.type}
+            plan={{
+              type: plan.type,
+              name: plan.name,
+              price: plan.price,
+              credits: plan.credits,
+              features: [...plan.features],
+            }}
+            onSelect={(isAnnual) => handlePlanSelect(plan.type, isAnnual)}
           />
-        )}
-      </div>
+        ))}
+      </motion.div>
+
+      {selectedPlan && (
+        <PaymentModal
+          plan={selectedPlan.plan}
+          isAnnual={selectedPlan.isAnnual}
+          onClose={() => setSelectedPlan(null)}
+          onPaymentSubmit={handlePaymentSubmit}
+          loading={loading}
+        />
+      )}
     </div>
   );
 }
