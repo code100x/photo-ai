@@ -18,7 +18,7 @@ export function Appbar() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 backdrop-blur-xl rounded-2xl  border border-gray-200 dark:border-gray-700 shadow-lg"
+        className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 backdrop-blur-xl rounded-2xl bg-background/50 border border-gray-200 dark:border-gray-700 shadow-lg"
       >
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
