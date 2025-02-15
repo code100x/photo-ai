@@ -93,100 +93,110 @@ export function Train() {
           <CardDescription>Train your custom AI model</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid w-full gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                placeholder="Name of your model"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+          <div className="grid w-full gap-4 md:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  placeholder="Name of your model"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="type">Type</Label>
+                <Select value={type} onValueChange={setType}>
+                  <SelectTrigger id="type" className="w-full">
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Man">Man</SelectItem>
+                    <SelectItem value="Woman">Woman</SelectItem>
+                    <SelectItem value="Others">Others</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="type">Type</Label>
-              <Select value={type} onValueChange={setType}>
-                <SelectTrigger id="type">
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectItem value="Man">Man</SelectItem>
-                  <SelectItem value="Woman">Woman</SelectItem>
-                  <SelectItem value="Others">Others</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="age">Age</Label>
+                <Input
+                  id="age"
+                  type="number"
+                  placeholder="Age"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="ethnicity">Ethnicity</Label>
+                <Select value={ethinicity} onValueChange={setEthinicity}>
+                  <SelectTrigger id="ethnicity" className="w-full">
+                    <SelectValue placeholder="Select ethnicity" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="White">White</SelectItem>
+                    <SelectItem value="Black">Black</SelectItem>
+                    <SelectItem value="Asian_American">Asian American</SelectItem>
+                    <SelectItem value="East_Asian">East Asian</SelectItem>
+                    <SelectItem value="South_East_Asian">South East Asian</SelectItem>
+                    <SelectItem value="South_Asian">South Asian</SelectItem>
+                    <SelectItem value="Middle_Eastern">Middle Eastern</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                type="number"
-                placeholder="Age"
-                value={age}
-                onChange={(e) => setAge(e.target.value)}
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="eyeColor">Eye Color</Label>
+                <Select value={eyeColor} onValueChange={setEyeColor}>
+                  <SelectTrigger id="eyeColor" className="w-full">
+                    <SelectValue placeholder="Select eye color" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Brown">Brown</SelectItem>
+                    <SelectItem value="Blue">Blue</SelectItem>
+                    <SelectItem value="Hazel">Hazel</SelectItem>
+                    <SelectItem value="Gray">Gray</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center justify-between p-2 space-x-2 rounded-md border border-input">
+                <Label htmlFor="bald" className="font-medium">Bald</Label>
+                <Switch
+                  id="bald"
+                  checked={bald}
+                  onCheckedChange={setBald}
+                />
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="ethnicity">Ethnicity</Label>
-              <Select value={ethinicity} onValueChange={setEthinicity}>
-                <SelectTrigger id="ethnicity">
-                  <SelectValue placeholder="Select ethnicity" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="White">White</SelectItem>
-                  <SelectItem value="Black">Black</SelectItem>
-                  <SelectItem value="Asian_American">Asian American</SelectItem>
-                  <SelectItem value="East_Asian">East Asian</SelectItem>
-                  <SelectItem value="South_East_Asian">South East Asian</SelectItem>
-                  <SelectItem value="South_Asian">South Asian</SelectItem>
-                  <SelectItem value="Middle_Eastern">Middle Eastern</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="eyeColor">Eye Color</Label>
-              <Select value={eyeColor} onValueChange={setEyeColor}>
-                <SelectTrigger id="eyeColor">
-                  <SelectValue placeholder="Select eye color" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Brown">Brown</SelectItem>
-                  <SelectItem value="Blue">Blue</SelectItem>
-                  <SelectItem value="Hazel">Hazel</SelectItem>
-                  <SelectItem value="Gray">Gray</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <Label htmlFor="bald">Bald</Label>
-              <Switch
-                id="bald"
-                checked={bald}
-                onCheckedChange={setBald}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Upload Images</Label>
-              <FileUpload onChange={handleFileUpload} />
+            <div className="space-y-2 w-full">
+              <Label className="block mb-2">Upload Images</Label>
+              <div className="w-full rounded-lg overflow-hidden">
+                <FileUpload onChange={handleFileUpload} />
+              </div>
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex flex-col sm:flex-row gap-4 sm:justify-between">
           <Button
             variant="outline"
             onClick={() => router.push("/")}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
           <Button
             onClick={trainModal}
             disabled={isLoading || !name || !imageUrl || !type || !age || !ethinicity || !eyeColor}
+            className="w-full sm:w-auto"
           >
             {isLoading ? "Creating..." : "Create Model"}
           </Button>

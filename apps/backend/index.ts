@@ -160,40 +160,40 @@ app.get("/pack/bulk", async (req, res) => {
 })
 
 app.get("/image/bulk", authMiddleware, async (req, res) => {
-  const ids = req.query.ids as string[]
-  const limit = req.query.limit as string ?? "100";
-  const offset = req.query.offset as string ?? "0";
+  // const ids = req.query.ids as string[]
+  // const limit = req.query.limit as string ?? "100";
+  // const offset = req.query.offset as string ?? "0";
 
-  const imagesData = await prismaClient.outputImages.findMany({
-    where: {
-      id: { in: ids }, 
-      userId: req.userId!,
-      status: {
-        not: "Failed"
-      }
-    },
-    orderBy: {
-      createdAt: 'desc'
-    },
-    skip: parseInt(offset),
-    take: parseInt(limit)
-  })
+  // const imagesData = await prismaClient.outputImages.findMany({
+  //   where: {
+  //     id: { in: ids }, 
+  //     userId: req.userId!,
+  //     status: {
+  //       not: "Failed"
+  //     }
+  //   },
+  //   orderBy: {
+  //     createdAt: 'desc'
+  //   },
+  //   skip: parseInt(offset),
+  //   take: parseInt(limit)
+  // })
 
-  res.json({
-    images: imagesData
-  })
+  // res.json({
+  //   images: imagesData
+  // })
 })
 
 app.get("/models", authMiddleware, async(req, res) => {
-  const models = await prismaClient.model.findMany({
-    where: {
-      OR: [{ userId: req.userId }, { open: true }]
-    }
-  })
+  // const models = await prismaClient.model.findMany({
+  //   where: {
+  //     OR: [{ userId: req.userId }, { open: true }]
+  //   }
+  // })
 
-  res.json({
-    models
-  })
+  // res.json({
+  //   models
+  // })
 })
 
 app.post("/fal-ai/webhook/train", async (req, res) => {
