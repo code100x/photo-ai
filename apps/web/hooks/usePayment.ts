@@ -12,7 +12,8 @@ const apiUrl = BACKEND_URL;
 export const creditUpdateEvent = new EventTarget();
 
 export function usePayment() {
-  const [loading, setLoading] = useState(false);
+  const [stripeLoading, setStripeLoading] = useState(false);
+  const [razorpayLoading, setRazorPayLoading] = useState(false);
   const { toast } = useToast();
   const { getToken } = useAuth();
   const router = useRouter();
@@ -23,7 +24,11 @@ export function usePayment() {
     method: "stripe" | "razorpay"
   ) => {
     try {
-      setLoading(true);
+      if (method === "stripe") {
+        setStripeLoading(true);
+      } else {
+        setRazorPayLoading(true);
+      }
       console.log("Initiating payment:", { plan, isAnnual, method });
 
       const token = await getToken();
@@ -125,12 +130,14 @@ export function usePayment() {
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      setStripeLoading(false);
+      setRazorPayLoading(false);
     }
   };
 
   return {
     handlePayment,
-    loading,
+    stripeLoading,
+    razorpayLoading,
   };
 }

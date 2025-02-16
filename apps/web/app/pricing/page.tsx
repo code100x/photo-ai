@@ -13,7 +13,7 @@ export default function SubscriptionPage() {
     isAnnual: boolean;
   } | null>(null);
 
-  const { handlePayment, loading } = usePayment();
+  const { handlePayment, stripeLoading, razorpayLoading } = usePayment();
 
   const plans = [
     {
@@ -99,7 +99,8 @@ export default function SubscriptionPage() {
           isAnnual={selectedPlan.isAnnual}
           onClose={() => setSelectedPlan(null)}
           onPaymentSubmit={handlePaymentSubmit}
-          loading={loading}
+          stripeLoading={stripeLoading}
+          razorPayLoading={razorpayLoading}
         />
       )}
     </div>

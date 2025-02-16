@@ -13,7 +13,8 @@ interface PaymentModalProps {
   isAnnual: boolean;
   onClose: () => void;
   onPaymentSubmit: (method: "stripe" | "razorpay") => Promise<void>;
-  loading: boolean;
+  stripeLoading: boolean;
+  razorPayLoading: boolean;
 }
 
 export function PaymentModal({
@@ -21,7 +22,8 @@ export function PaymentModal({
   isAnnual,
   onClose,
   onPaymentSubmit,
-  loading,
+  stripeLoading,
+  razorPayLoading,
 }: PaymentModalProps) {
   const planName = plan.charAt(0).toUpperCase() + plan.slice(1);
 
@@ -46,11 +48,14 @@ export function PaymentModal({
         <div className="grid gap-4 py-4">
           <Button
             onClick={() => handlePaymentClick("stripe")}
-            disabled={loading}
-            className={cn("w-full", loading && "cursor-not-allowed opacity-50")}
+            disabled={stripeLoading}
+            className={cn(
+              "w-full",
+              stripeLoading && "cursor-not-allowed opacity-50"
+            )}
           >
             <div className="flex items-center justify-center gap-2">
-              {loading ? (
+              {stripeLoading ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   <span>Processing...</span>
@@ -72,12 +77,15 @@ export function PaymentModal({
 
           <Button
             onClick={() => handlePaymentClick("razorpay")}
-            disabled={loading}
+            disabled={razorPayLoading}
             variant="outline"
-            className={cn("w-full", loading && "cursor-not-allowed opacity-50")}
+            className={cn(
+              "w-full",
+              razorPayLoading && "cursor-not-allowed opacity-50"
+            )}
           >
             <div className="flex items-center justify-center gap-2">
-              {loading ? (
+              {razorPayLoading ? (
                 <>
                   <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
                   <span>Processing...</span>
