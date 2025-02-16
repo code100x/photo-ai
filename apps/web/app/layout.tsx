@@ -5,6 +5,7 @@ import { Appbar } from "@/components/Appbar";
 import { Providers } from "@/components/providers/Providers";
 import { Footer } from "@/components/Footer";
 
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -19,6 +20,9 @@ export const metadata: Metadata = {
   title: "100xPhoto - AI-Powered Photo Enhancement",
   description:
     "Transform your photos with AI-powered enhancement and editing tools.",
+  icons: {
+    icon: "/favicon.svg"
+  }
 };
 
 export default function RootLayout({
