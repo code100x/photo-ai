@@ -25,6 +25,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "razorpay": "^2.9.5",
-    "stripe": "^17.6.0"
+    "stripe": "^17.6.0",
+    "svix": "^1.57.0"
   }
 }
