@@ -47,6 +47,37 @@ export const CREDITS_PER_PLAN = {
   premium: 1000,
 } as const;
 
+export async function createTransactionRecord(
+  userId: string,
+  amount: number,
+  currency: string,
+  paymentId: string,
+  orderId: string,
+  plan: PlanType,
+  isAnnual: boolean,
+  status: "PENDING" | "SUCCESS" | "FAILED" = "PENDING" // Default to PENDING
+) {
+  try {
+    return await withRetry(() =>
+      prismaClient.transaction.create({
+        data: {
+          userId,
+          amount,
+          currency,
+          paymentId,
+          orderId,
+          plan,
+          isAnnual,
+          status,
+        },
+      })
+    );
+  } catch (error) {
+    console.error("Transaction creation error:", error);
+    throw error;
+  }
+}
+
 export async function createStripeSession(
   userId: string,
   plan: "basic" | "premium",
@@ -95,6 +126,18 @@ export async function createStripeSession(
         isAnnual: String(isAnnual),
       },
     });
+
+    // Create initial pending transaction record
+    await createTransactionRecord(
+      userId,
+      price,
+      "usd",
+      session.payment_intent as string,
+      session.id,
+      plan,
+      isAnnual,
+      "PENDING"
+    );
 
     console.log("Stripe session created:", session);
     return session;
@@ -155,6 +198,18 @@ export async function createRazorpayOrder(
       });
     });
 
+    // Use actual order id and payment id
+    await createTransactionRecord(
+      userId,
+      baseAmount,
+      "INR",
+      "", // Payment ID will be updated after payment is completed
+      (order as any).id, // Use the actual order ID
+      plan,
+      isAnnual,
+      "PENDING"
+    );
+
     console.log("Order created:", order);
 
     // Return complete payment config
@@ -187,22 +242,66 @@ export async function createRazorpayOrder(
   }
 }
 
+// export async function verifyStripePayment(sessionId: string) {
+//   if (!stripe) {
+//     throw new Error("Stripe is not configured");
+//   }
+//   const session = await stripe.checkout.sessions.retrieve(sessionId);
+//   return session.payment_status === "paid";
+// }
+
 export async function verifyStripePayment(sessionId: string) {
   if (!stripe) {
     throw new Error("Stripe is not configured");
   }
+
   const session = await stripe.checkout.sessions.retrieve(sessionId);
+  const { userId, plan, isAnnual } = session.metadata as {
+    userId: string;
+    plan: PlanType;
+    isAnnual: string;
+  };
+
+  // Find existing pending transaction
+  const existingTransaction = await prismaClient.transaction.findFirst({
+    where: {
+      orderId: session.id,
+      userId: userId,
+      status: "PENDING",
+    },
+  });
+
+  if (!existingTransaction) {
+    throw new Error("No pending transaction found for this session");
+  }
+
+  // Update the transaction status
+  await prismaClient.transaction.update({
+    where: {
+      id: existingTransaction.id,
+    },
+    data: {
+      status: session.payment_status === "paid" ? "SUCCESS" : "FAILED",
+    },
+  });
+
   return session.payment_status === "paid";
 }
 
-export const verifyRazorpaySignature = ({
+export const verifyRazorpaySignature = async ({
   paymentId,
   orderId,
   signature,
+  userId,
+  isAnnual,
+  plan,
 }: {
   paymentId: string;
   orderId: string;
   signature: string;
+  userId: string;
+  plan: PlanType;
+  isAnnual: boolean;
 }) => {
   try {
     if (!RAZORPAY_KEY_SECRET) {
@@ -217,6 +316,33 @@ export const verifyRazorpaySignature = ({
 
     const isValid = expectedSignature === signature;
     console.log("Signature verification:", { isValid, orderId, paymentId });
+
+    const order = await razorpay.orders.fetch(orderId);
+    const amount = order.amount;
+    const currency = order.currency;
+
+    // Find existing pending transaction
+    const existingTransaction = await prismaClient.transaction.findFirst({
+      where: {
+        orderId: orderId,
+        userId: userId,
+        status: "PENDING",
+      },
+    });
+
+    if (!existingTransaction) {
+      throw new Error("No pending transaction found for this order");
+    }
+
+    // Update the transaction status
+    await prismaClient.transaction.update({
+      where: {
+        id: existingTransaction.id,
+      },
+      data: {
+        status: isValid ? "SUCCESS" : "FAILED",
+      },
+    });
 
     return isValid;
   } catch (error) {
@@ -234,9 +360,13 @@ async function withRetry<T>(
   try {
     return await operation();
   } catch (error) {
-    if (retries > 0 && error instanceof Error && error.message.includes("Can't reach database server")) {
+    if (
+      retries > 0 &&
+      error instanceof Error &&
+      error.message.includes("Can't reach database server")
+    ) {
       console.log(`Retrying operation, ${retries} attempts left`);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise((resolve) => setTimeout(resolve, delay));
       return withRetry(operation, retries - 1, delay * 2);
     }
     throw error;
@@ -248,7 +378,7 @@ export async function addCreditsForPlan(userId: string, plan: PlanType) {
     const credits = CREDITS_PER_PLAN[plan];
     console.log("Adding credits:", { userId, plan, credits });
 
-    return await withRetry(() => 
+    return await withRetry(() =>
       prismaClient.userCredit.upsert({
         where: { userId },
         update: { amount: { increment: credits } },

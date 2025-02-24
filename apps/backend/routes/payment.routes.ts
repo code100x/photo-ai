@@ -1,5 +1,5 @@
 import express from "express";
-import { authMiddleware } from "../middleware";
+// import { authMiddleware } from "../middleware";
 import { PlanType } from "@prisma/client";
 import { prismaClient } from "db";
 import Stripe from "stripe";
@@ -12,6 +12,7 @@ import {
   createSubscriptionRecord,
   PaymentService,
 } from "../services/payment";
+import { authMiddleware } from "../middleware";
 
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -24,7 +25,7 @@ router.post(
   async (req: express.Request, res: express.Response) => {
     try {
       const { plan, isAnnual, method } = req.body;
-      const userId = req.userId;
+      const userId = req.userId!;
       const userEmail = (req as any).user?.email;
 
       console.log("Payment request received:", {
@@ -197,7 +198,7 @@ router.post(
 
       // Debug log
       console.log("Verification Request:", {
-        userId: req.userId,
+        userId : req.userId,
         paymentId: razorpay_payment_id,
         orderId: razorpay_order_id,
         signature: razorpay_signature,
@@ -228,6 +229,9 @@ router.post(
           paymentId: razorpay_payment_id,
           orderId: razorpay_order_id,
           signature: razorpay_signature,
+          isAnnual: isAnnual,
+          plan: plan as PlanType,
+          userId: req.userId!
         });
 
         if (!isValid) {
@@ -246,7 +250,7 @@ router.post(
 
         // Get updated credits
         const userCredit = await prismaClient.userCredit.findUnique({
-          where: { userId: req.userId! },
+          where: { userId : req.userId! },
           select: { amount: true },
         });
 
@@ -286,7 +290,7 @@ router.get(
     try {
       const subscription = await prismaClient.subscription.findFirst({
         where: {
-          userId: req.params.userId,
+          userId: req.userId!,
         },
         orderBy: {
           createdAt: "desc",
@@ -315,7 +319,7 @@ router.get(
     try {
       const userCredit = await prismaClient.userCredit.findUnique({
         where: {
-          userId: req.params.userId,
+          userId: req.userId,
         },
         select: {
           amount: true,

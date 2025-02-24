@@ -136,3 +136,25 @@ model UserCredit {
 
   @@index([userId])
 }
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model Transaction {
+  id          String           @id @default(cuid())
+  userId      String
+  amount      Int
+  currency    String
+  paymentId   String
+  orderId     String
+  plan        PlanType
+  isAnnual    Boolean
+  status      TransactionStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([userId])
+}

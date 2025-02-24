@@ -33,6 +33,9 @@ export async function authMiddleware(
     // Get the JWT verification key from environment variable
     const publicKey = process.env.CLERK_JWT_PUBLIC_KEY!;
 
+    console.log("Public key:", publicKey);
+    
+
     if (!publicKey) {
       console.error("Missing CLERK_JWT_PUBLIC_KEY in environment variables");
       res.status(500).json({ message: "Server configuration error" });
