@@ -24,3 +24,23 @@ export interface SubscriptionStatus {
   createdAt: string;
   credits: number;
 }
+
+export enum TransactionStatus {
+  SUCCESS = "SUCCESS",
+  FAILED = "FAILED",
+  PENDING = "PENDING",
+}
+
+export interface Transaction {
+  id: string;
+  userId: string;
+  amount: number;
+  currency: string;
+  paymentId: string;
+  orderId: string;
+  plan: PlanType;
+  isAnnual: boolean;
+  status: TransactionStatus;
+  createdAt: string;
+  updatedAt: string;
+}

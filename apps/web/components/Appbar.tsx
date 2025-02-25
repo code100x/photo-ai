@@ -19,7 +19,7 @@ export function Appbar() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 backdrop-blur-xl rounded-2xl bg-background/50 border border-gray-200 dark:border-gray-700 shadow-lg"
+          className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 backdrop-blur-xl rounded-2xl bg-background/50 border border-neutral-200 dark:border-neutral-700 shadow-lg"
         >
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
@@ -52,10 +52,18 @@ export function Appbar() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
+                  className="dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition"
                   asChild
                 >
                   <Link href="/dashboard">Dashboard</Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition"
+                  asChild
+                >
+                  <Link href="/purchases">My Purchases</Link>
                 </Button>
                 <Credits />
                 <UserButton
@@ -73,7 +81,7 @@ export function Appbar() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
+                  className="dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition"
                   asChild
                 >
                   <Link href="/pricing">Pricing</Link>
@@ -85,7 +93,7 @@ export function Appbar() {
                   <Button
                     variant="default"
                     size="sm"
-                    className="relative overflow-hidden bg-gradient-to-r from-gray-800 to-gray-900 text-white dark:from-gray-700 dark:to-gray-800 border border-gray-600 dark:border-gray-700 rounded-lg shadow-md shadow-gray-800/20 dark:shadow-black/30 px-4 py-2 font-medium tracking-wide transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-[1.02] hover:from-gray-700 hover:to-gray-900 dark:hover:from-gray-600 dark:hover:to-gray-750"
+                    className="relative overflow-hidden bg-gradient-to-r from-neutral-800 to-neutral-900 text-white dark:from-neutral-700 dark:to-neutral-800 border border-neutral-600 dark:border-neutral-700 rounded-lg shadow-md shadow-neutral-800/20 dark:shadow-black/30 px-4 py-2 font-medium tracking-wide transition-all duration-300 ease-in-out hover:shadow-lg hover:scale-[1.02] hover:from-neutral-700 hover:to-neutral-900 dark:hover:from-neutral-600 dark:hover:to-neutral-750"
                     asChild
                   >
                     <SignInButton mode="modal">

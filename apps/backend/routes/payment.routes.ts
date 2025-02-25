@@ -463,4 +463,28 @@ router.post("/verify", async (req, res) => {
   }
 });
 
+
+router.get("/transactions",authMiddleware, async (req, res) => {
+  try {
+    const transactions = await prismaClient.transaction.findMany({
+      where: {
+        userId: req.userId!,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.status(200).json({
+      transactions,
+    });
+    return;
+  } catch (error) {
+    res.status(500).json({
+      message: "Internal server error",
+    });
+    return;
+  }
+});
+
 export default router;
