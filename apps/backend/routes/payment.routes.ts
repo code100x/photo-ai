@@ -1,5 +1,5 @@
 import express from "express";
-// import { authMiddleware } from "../middleware";
+import { authMiddleware } from "../middleware";
 import { PlanType } from "@prisma/client";
 import { prismaClient } from "db";
 import Stripe from "stripe";
@@ -12,7 +12,6 @@ import {
   createSubscriptionRecord,
   PaymentService,
 } from "../services/payment";
-import { authMiddleware } from "../middleware";
 
 const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {

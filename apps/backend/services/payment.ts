@@ -242,14 +242,6 @@ export async function createRazorpayOrder(
   }
 }
 
-// export async function verifyStripePayment(sessionId: string) {
-//   if (!stripe) {
-//     throw new Error("Stripe is not configured");
-//   }
-//   const session = await stripe.checkout.sessions.retrieve(sessionId);
-//   return session.payment_status === "paid";
-// }
-
 export async function verifyStripePayment(sessionId: string) {
   if (!stripe) {
     throw new Error("Stripe is not configured");
@@ -340,6 +332,7 @@ export const verifyRazorpaySignature = async ({
         id: existingTransaction.id,
       },
       data: {
+        paymentId,
         status: isValid ? "SUCCESS" : "FAILED",
       },
     });
