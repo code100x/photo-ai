@@ -17,7 +17,7 @@ import { HowItWorks } from "./HowItWorks";
 
 export function Hero() {
   return (
-    <div className="bg-black" >
+    <div className="dark:bg-black">
       <div className="relative min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900 via-gray-900 to-black text-white overflow-hidden">
         <BackgroundEffects />
 
@@ -33,7 +33,7 @@ export function Hero() {
             {/* <TrustedBy /> */}
 
             <section className="relative">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/5 to-black/20 pointer-events-none" />
+              <div className="absolute rounded-3xl inset-0 dark:bg-gradient-to-b from-transparent via-black/5 to-black/20 pointer-events-none" />
               <ImageCarousel />
             </section>
 
@@ -42,12 +42,12 @@ export function Hero() {
             <StatsSection />
 
             <section id="features" className="relative">
-              <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 dark:bg-gradient-to-b from-black/20 to-transparent pointer-events-none" />
               <Features />
             </section>
 
             <section className="relative">
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20 pointer-events-none" />
+              <div className="absolute inset-0 dark:bg-gradient-to-b from-transparent to-black/20 pointer-events-none" />
               <Testimonials />
             </section>
 
@@ -59,12 +59,12 @@ export function Hero() {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="relative py-20"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 blur-3xl" />
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-red-500/20 blur-3xl dark:from-purple-500/20 dark:via-pink-500/20 dark:to-red-500/20" />
               <div className="relative text-center max-w-3xl mx-auto space-y-8">
-                <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 dark:from-purple-400 dark:via-pink-500 dark:to-red-500 bg-clip-text text-transparent">
                   Start Your AI Portrait Journey Today
                 </h2>
-                <p className="text-xl text-gray-300">
+                <p className="text-muted-foreground text-xl">
                   Join thousands of creators who have already transformed their
                   photos with our AI technology.
                 </p>
@@ -74,7 +74,7 @@ export function Hero() {
                     <Button
                       asChild
                       size="lg"
-                      className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                      className="group bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                     >
                       <SignInButton mode="modal">
                         <span className="flex items-center">
@@ -86,7 +86,7 @@ export function Hero() {
                     <Button
                       variant="outline"
                       size="lg"
-                      className="border-white/20 hover:bg-white/10"
+                      className="text-black dark:text-white"
                       onClick={() =>
                         document
                           .getElementById("features")
@@ -100,17 +100,17 @@ export function Hero() {
 
                 <div className="pt-8 flex flex-wrap items-center justify-center gap-4 sm:gap-8">
                   <div className="flex items-center gap-2 text-sm">
-                    <span className="flex items-center text-purple-300">
+                    <span className="flex items-center text-purple-600 dark:text-purple-300">
                       <CheckCircle className="w-4 h-4 mr-1" />
                       No credit card required
                     </span>
                     <span className="hidden sm:inline text-gray-500">•</span>
-                    <span className="flex items-center text-pink-300">
+                    <span className="flex items-center text-pink-600 dark:text-pink-300">
                       <Sparkles className="w-4 h-4 mr-1" />
                       Free credits to start
                     </span>
                     <span className="hidden sm:inline text-gray-500">•</span>
-                    <span className="flex items-center text-red-300">
+                    <span className="flex items-center text-red-600 dark:text-red-300">
                       <Clock className="w-4 h-4 mr-1" />
                       Cancel anytime
                     </span>

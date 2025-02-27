@@ -5,12 +5,9 @@ import { Button } from "./ui/button";
 import { Credits } from "./navbar/Credits";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ThemeSelector } from "./ThemeSelector";
-import { usePathname } from "next/navigation";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Appbar() {
-  const pathname = usePathname();
-
   return (
     <div className="bg-black">
       <motion.header
@@ -23,7 +20,7 @@ export function Appbar() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 backdrop-blur-xl rounded-2xl bg-background/50 border border-neutral-200 dark:border-neutral-900 shadow-lg"
+          className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 backdrop-blur-xl rounded-2xl bg-background/50 border border-neutral-300 dark:border-neutral-900 shadow-lg"
         >
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
@@ -53,16 +50,14 @@ export function Appbar() {
             {/* Auth & Pricing */}
             <div className="flex items-center md:gap-4 gap-2">
               <SignedIn>
-                {pathname !== "/dashboard" && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition"
-                    asChild
-                  >
-                    <Link href="/dashboard">Dashboard</Link>
-                  </Button>
-                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-800 transition"
+                  asChild
+                >
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button> 
                 <Button
                   variant="ghost"
                   size="sm"
@@ -108,7 +103,7 @@ export function Appbar() {
                   </Button>
                 </motion.div>
               </SignedOut>
-              <ThemeSelector />
+              <ThemeToggle />
             </div>
           </div>
         </motion.div>

@@ -42,19 +42,19 @@ export function Features() {
         <motion.div
           key={index}
           whileHover={{ y: -10 }}
-          className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 border border-white/10 group"
+          className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm hover:bg-pink-50 dark:hover:bg-white/10 transition-all duration-300 border dark:border-white/10 border-pink-100 group"
         >
           <div
             className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.gradient} p-0.5 mb-4 group-hover:scale-110 transition-transform duration-300`}
           >
-            <div className="w-full h-full bg-gray-900 rounded-[10px] flex items-center justify-center">
+            <div className="w-full h-full bg-neutral-900 rounded-[10px] flex items-center justify-center">
               {feature.icon}
             </div>
           </div>
-          <h3 className="text-xl font-semibold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            <h3 className="text-xl font-semibold mb-2 dark:bg-gradient-to-r dark:from-white dark:to-neutral-300 bg-gradient-to-r from-neutral-900 to-neutral-700 bg-clip-text text-transparent">
             {feature.title}
-          </h3>
-          <p className="text-gray-400">{feature.description}</p>
+            </h3>
+          <p className="text-muted-foreground">{feature.description}</p>
         </motion.div>
       ))}
     </motion.div>
