@@ -36,21 +36,48 @@ app.use(
 app.use(express.json());
 
 app.get("/pre-signed-url", async (req, res) => {
-  const key = `models/${Date.now()}_${Math.random()}.zip`;
-  const url = S3Client.presign(key, {
-    method: "PUT",
-    accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_SECRET_KEY,
-    endpoint: process.env.ENDPOINT,
-    bucket: process.env.BUCKET_NAME,
-    expiresIn: 60 * 5,
-    type: "application/zip",
-  });
 
-  res.json({
-    url,
-    key,
-  });
+  try {
+    const { S3_ACCESS_KEY, S3_SECRET_KEY, ENDPOINT, BUCKET_NAME } = process.env;
+    if (!S3_ACCESS_KEY || !S3_SECRET_KEY || !ENDPOINT || !BUCKET_NAME) {
+      return res.status(500).json({
+        error:
+          "Server configuration error: Missing S3 credentials or bucket details",
+      });
+    }
+
+    const key = `models/${Date.now()}_${Math.random().toString(36).substring(7)}.zip`;
+    console.log("Generated key:", key);
+
+    const url = await S3Client.presign(key, {
+      method: "PUT",
+      accessKeyId: S3_ACCESS_KEY,
+      secretAccessKey: S3_SECRET_KEY,
+      endpoint: ENDPOINT,
+      bucket: BUCKET_NAME,
+      expiresIn: 60 * 5,
+      type: "application/zip",
+    });
+
+    res.status(200).json({ url, key });
+  } catch (error) {
+    console.error("Error:", error);
+
+    if (error instanceof TypeError) {
+      return res.status(400).json({
+        message: "Invalid request parameters",
+      });
+    } else if (error.code === "CredentialsError") {
+      return res.status(403).json({
+        message: "Invalid AWS credentials",
+      });
+    } else {
+      return res.status(500).json({
+        message: "Failed to generate pre-signed URL",
+        error: error.message || "Unknown error",
+      });
+    }
+  }
 });
 
 app.post("/ai/training", authMiddleware, async (req, res) => {
