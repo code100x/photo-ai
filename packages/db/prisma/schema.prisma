@@ -14,13 +14,14 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  clerkId   String   @unique
-  email     String   @unique
-  name      String?
+  id             String      @id @default(uuid())
+  clerkId        String      @unique
+  email          String      @unique
+  name           String?
   profilePicture String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  credits        UserCredit?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
 }
 
 enum ModelTrainingStatusEnum {
@@ -30,24 +31,25 @@ enum ModelTrainingStatusEnum {
 }
 
 model Model {
-  id              String      @id   @default(uuid())
-  name            String
-  type            ModelTypeEnum
-  age             Int
-  ethinicity      EthenecityEnum  
-  eyeColor        EyeColorEnum
-  bald            Boolean
-  userId          String
-  triggerWord     String?
-  tensorPath      String?
-  thumbnail       String?
-  trainingStatus  ModelTrainingStatusEnum @default(Pending)
-  outputImages    OutputImages[]
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-  falAiRequestId  String?
-  zipUrl          String
-  open            Boolean    @default(false)
+  id             String                  @id @default(uuid())
+  name           String
+  type           ModelTypeEnum
+  age            Int
+  ethinicity     EthenecityEnum
+  eyeColor       EyeColorEnum
+  bald           Boolean
+  userId         String
+  triggerWord    String?
+  tensorPath     String?
+  thumbnail      String?
+  trainingStatus ModelTrainingStatusEnum @default(Pending)
+  outputImages   OutputImages[]
+  createdAt      DateTime                @default(now())
+  updatedAt      DateTime                @updatedAt
+  falAiRequestId String?
+  zipUrl         String
+  open           Boolean                 @default(false)
+
   @@index([falAiRequestId])
 }
 
@@ -58,33 +60,34 @@ enum OutputImageStatusEnum {
 }
 
 model OutputImages {
-  id        String  @id   @default(uuid())
-  imageUrl  String  @default("")
-  modelId   String
-  userId    String
-  prompt    String
-  falAiRequestId    String?
-  status    OutputImageStatusEnum   @default(Pending)
-  model     Model   @relation(fields: [modelId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String                @id @default(uuid())
+  imageUrl       String                @default("")
+  modelId        String
+  userId         String
+  prompt         String
+  falAiRequestId String?
+  status         OutputImageStatusEnum @default(Pending)
+  model          Model                 @relation(fields: [modelId], references: [id])
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
   @@index([falAiRequestId])
 }
 
 model Packs {
-  id        String   @id @default(uuid())
-  name      String
-  description String @default("")
-  imageUrl1    String @default("")
-  imageUrl2    String @default("")
-  prompts   PackPrompts[]
+  id          String        @id @default(uuid())
+  name        String
+  description String        @default("")
+  imageUrl1   String        @default("")
+  imageUrl2   String        @default("")
+  prompts     PackPrompts[]
 }
 
 model PackPrompts {
-  id        String    @id @default(uuid())
-  prompt    String
-  packId    String
-  pack      Packs    @relation(fields: [packId], references: [id])
+  id     String @id @default(uuid())
+  prompt String
+  packId String
+  pack   Packs  @relation(fields: [packId], references: [id])
 }
 
 model Subscription {
@@ -111,11 +114,11 @@ enum ModelTypeEnum {
 enum EthenecityEnum {
   White
   Black
-  Asian_American    @map("Asian American")
-  East_Asian        @map("East Asian")
-  South_East_Asian  @map("South East Asian")
-  South_Asian       @map("South Asian")
-  Middle_Eastern    @map("Middle Eastern")
+  Asian_American   @map("Asian American")
+  East_Asian       @map("East Asian")
+  South_East_Asian @map("South East Asian")
+  South_Asian      @map("South Asian")
+  Middle_Eastern   @map("Middle Eastern")
   Pacific
   Hispanic
 }
@@ -130,6 +133,7 @@ enum EyeColorEnum {
 model UserCredit {
   id        String   @id @default(cuid())
   userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
   amount    Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

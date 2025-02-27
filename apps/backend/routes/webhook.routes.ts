@@ -1,12 +1,19 @@
 import { prismaClient } from "db";
 import { Router } from "express";
 import { Webhook } from "svix";
+import { fal } from "@fal-ai/client";
+import { FalAIModel } from "../models/FalAIModel";
 
 export const router = Router();
 
+const IMAGE_GEN_CREDITS = 1;
+const TRAIN_MODEL_CREDITS = 20;
+
+const falAiModel = new FalAIModel();
+
 /**
  * POST api/webhook/clerk
- * Clerk webhook endpoint
+ * Clerk will hit this endpoint when user is created, updated or deleted
  */
 router.post("/clerk", async (req, res) => {
   const SIGNING_SECRET =
@@ -27,10 +34,11 @@ router.post("/clerk", async (req, res) => {
   const svix_signature = headers["svix-signature"];
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
       message: "Error: Missing svix headers",
     });
+    return;
   }
 
   let evt: any;
@@ -43,10 +51,11 @@ router.post("/clerk", async (req, res) => {
     });
   } catch (err) {
     console.log("Error: Could not verify webhook:", err.message);
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
       message: err.message,
     });
+    return;
   }
 
   const { id } = evt.data;
@@ -86,9 +95,65 @@ router.post("/clerk", async (req, res) => {
     }
   } catch (error) {
     console.error("Error handling webhook:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return;
   }
-  return res.status(200).json({ success: true, message: "Webhook received" });
+  res.status(200).json({ success: true, message: "Webhook received" });
+  return;
+});
+
+/**
+ * POST api/webhook/fal-ai/train
+ * Fal AI wil hit this endpoint when training is done
+ */
+
+router.post("/fal-ai/train", async (req, res) => {
+  const { requestId } = req.body;
+
+  const result = await fal.queue.result("fal-ai/flux-lora", {
+    requestId,
+  });
+
+  const { imageUrl } = await falAiModel.generateImageSync(
+    //@ts-ignore
+    result.data.diffusers_lora_file.url
+  );
+
+  await prismaClient.model.updateMany({
+    where: {
+      falAiRequestId: requestId,
+    },
+    data: {
+      trainingStatus: "Generated",
+      //@ts-ignore
+      tensorPath: result.data.diffusers_lora_file.url,
+      thumbnail: imageUrl,
+    },
+  });
+  res.json({
+    message: "Webhook received",
+  });
+});
+
+/**
+ * POST api/webhook/fal-ai/image
+ * Fal AI wil hit this endpoint when image is generated
+ */
+
+router.post("/fal-ai/image", async (req, res) => {
+  const { requestId } = req.body;
+
+  await prismaClient.outputImages.updateMany({
+    where: {
+      falAiRequestId: requestId,
+    },
+    data: {
+      status: "Generated",
+      imageUrl: req.body.payload.images[0].url,
+    },
+  });
+
+  res.status(200).json({
+    message: "Webhook received",
+  });
 });

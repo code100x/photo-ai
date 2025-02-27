@@ -63,6 +63,27 @@ app.post("/ai/training", authMiddleware, async (req, res) => {
     return;
   }
 
+  // Todo : For checking the credits two queries are being made, we can combine them into one
+  const credits = await prismaClient.userCredit.findUnique({
+    where: {
+      userId: req.userId!,
+    },
+  });
+  if ((credits?.amount ?? 0) < TRAIN_MODEL_CREDITS) {
+    res.status(411).json({
+      message: "Not enough credits",
+    });
+    return;
+  }
+  await prismaClient.userCredit.update({
+    where: {
+      userId: req.userId!,
+    },
+    data: {
+      amount: { decrement: TRAIN_MODEL_CREDITS },
+    },
+  });
+
   const { request_id, response_url } = await falAiModel.trainModel(
     parsedBody.data.zipUrl,
     parsedBody.data.name
@@ -120,7 +141,6 @@ app.post("/ai/generate", authMiddleware, async (req, res) => {
     });
     return;
   }
-
   const { request_id, response_url } = await falAiModel.generateImage(
     parsedBody.data.prompt,
     model.tensorPath
@@ -268,91 +288,7 @@ app.get("/models", authMiddleware, async (req, res) => {
   });
 });
 
-app.post("/fal-ai/webhook/train", async (req, res) => {
-  const requestId = req.body.request_id as string;
 
-  const result = await fal.queue.result("fal-ai/flux-lora", {
-    requestId,
-  });
-
-  // check if the user has enough credits
-  const credits = await prismaClient.userCredit.findUnique({
-    where: {
-      userId: req.userId!,
-    },
-  });
-
-  if ((credits?.amount ?? 0) < TRAIN_MODEL_CREDITS) {
-    res.status(411).json({
-      message: "Not enough credits",
-    });
-    return;
-  }
-
-  const { imageUrl } = await falAiModel.generateImageSync(
-    result.data.diffusers_lora_file.url
-  );
-
-  await prismaClient.model.updateMany({
-    where: {
-      falAiRequestId: requestId,
-    },
-    data: {
-      trainingStatus: "Generated",
-      //@ts-ignore
-      tensorPath: result.data.diffusers_lora_file.url,
-      thumbnail: imageUrl,
-    },
-  });
-
-  await prismaClient.userCredit.update({
-    where: {
-      userId: req.userId!,
-    },
-    data: {
-      amount: { decrement: TRAIN_MODEL_CREDITS },
-    },
-  });
-
-  res.json({
-    message: "Webhook received",
-  });
-});
-
-app.post("/fal-ai/webhook/image", async (req, res) => {
-  console.log("fal-ai/webhook/image");
-  console.log(req.body);
-  // update the status of the image in the DB
-  const requestId = req.body.request_id;
-
-  if (req.body.status === "ERROR") {
-    res.status(411).json({});
-    prismaClient.outputImages.updateMany({
-      where: {
-        falAiRequestId: requestId,
-      },
-      data: {
-        status: "Failed",
-        imageUrl: req.body.payload.images[0].url,
-      },
-    });
-    return;
-  }
-
-  await prismaClient.outputImages.updateMany({
-    where: {
-      falAiRequestId: requestId,
-    },
-    data: {
-      status: "Generated",
-      imageUrl: req.body.payload.images[0].url,
-    },
-  });
-
-  res.json({
-    message: "Webhook received",
-  });
-});
 
 app.use("/payment", paymentRoutes);
 app.use("/api/webhook", webhookRouter);
