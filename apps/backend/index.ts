@@ -11,6 +11,11 @@ import { FalAIModel } from "./models/FalAIModel";
 import cors from "cors";
 import { authMiddleware } from "./middleware";
 import dotenv from "dotenv";
+import {
+  ModelTrainingStatusEnum,
+  OutputImageStatusEnum,
+  TransactionStatus,
+} from "@prisma/client";
 
 import paymentRoutes from "./routes/payment.routes";
 import { router as webhookRouter } from "./routes/webhook.routes";
@@ -256,7 +261,7 @@ app.get("/image/bulk", authMiddleware, async (req, res) => {
   });
 });
 
-app.get("/models", authMiddleware, async (req, res) => {
+app.get("/models", async (req, res) => {
   const models = await prismaClient.model.findMany({
     where: {
       OR: [{ userId: req.userId }, { open: true }],
@@ -351,6 +356,100 @@ app.post("/fal-ai/webhook/image", async (req, res) => {
 
   res.json({
     message: "Webhook received",
+  });
+});
+
+app.get("/open", async (req, res) => {
+  console.log("in open");
+  const userCount = await prismaClient.user.count();
+  const trainedModelCount = await prismaClient.model.count({
+    where: { trainingStatus: ModelTrainingStatusEnum.Generated },
+  });
+  const imagesCount = await prismaClient.outputImages.count({
+    where: { status: OutputImageStatusEnum.Generated },
+  });
+  const packCount = await prismaClient.packs.count();
+
+  const totalRevenue = await prismaClient.transaction.aggregate({
+    where: { status: TransactionStatus.SUCCESS },
+    _sum: { amount: true },
+  });
+
+  console.log("open stats", {
+    userCount,
+    trainedModelCount,
+    imagesCount,
+    packCount,
+    totalRevenue: totalRevenue._sum.amount,
+  });
+  const thirtyDaysAgo = new Date();
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+  const dailyUsers = await prismaClient.user.groupBy({
+    by: ["createdAt"],
+    where: { createdAt: { gte: thirtyDaysAgo } },
+    _count: { id: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const dailyTrainedModels = await prismaClient.model.groupBy({
+    by: ["createdAt"],
+    where: {
+      createdAt: { gte: thirtyDaysAgo },
+      trainingStatus: ModelTrainingStatusEnum.Generated,
+    },
+    _count: { id: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const dailyGeneratedImages = await prismaClient.outputImages.groupBy({
+    by: ["createdAt"],
+    where: {
+      status: OutputImageStatusEnum.Generated,
+      createdAt: { gte: thirtyDaysAgo },
+    },
+    _count: { id: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const dailyRevenue = await prismaClient.transaction.groupBy({
+    by: ["createdAt"],
+    where: {
+      createdAt: { gte: thirtyDaysAgo },
+      status: TransactionStatus.SUCCESS,
+    },
+    _sum: { amount: true },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const charts = {
+    dailyUsers: dailyUsers.map((user) => ({
+      date: user.createdAt,
+      count: user._count.id,
+    })),
+    dailyTrainedModels: dailyTrainedModels.map((model) => ({
+      date: model.createdAt,
+      count: model._count.id,
+    })),
+    dailyGeneratedImages: dailyGeneratedImages.map((image) => ({
+      date: image.createdAt,
+      count: image._count.id,
+    })),
+    dailyRevenue: dailyRevenue.map((entry) => ({
+      date: entry.createdAt,
+      amount: entry._sum.amount || 0,
+    })),
+  };
+
+  res.status(200).json({
+    data: {
+      userCount,
+      trainedModelCount,
+      imagesCount,
+      packCount,
+      totalRevenue: totalRevenue._sum.amount,
+      charts,
+    },
   });
 });
 
