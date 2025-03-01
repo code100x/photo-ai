@@ -1,23 +1,27 @@
 import React from "react";
 import { BACKEND_URL } from "../config";
-import Header from "@/components/open/Header";
+import Heading from "@/components/open/Heading";
 import StatCards from "@/components/open/StatCards";
 import OpenCharts from "@/components/open/OpenCharts";
 
 async function OpenPage() {
-  console.log("BACKEND_URL", BACKEND_URL);
   const response = await fetch(`${BACKEND_URL}/open`);
   const statsData = await response.json();
-  console.log("statsData", statsData);
 
   return (
     <div className="min-h-screen bg-background py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        <Header>Open Stats</Header>
+        <Heading className="text-4xl font-bold text-foreground text-center mb-12 ">
+          Open Stats
+        </Heading>
 
-        <StatCards stats={statsData?.data || {}} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-16">
+          <StatCards stats={statsData?.data || {}} />
+        </div>
 
-        <OpenCharts statsData={statsData?.data || []} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <OpenCharts statsData={statsData?.data || []} />
+        </div>
       </div>
     </div>
   );

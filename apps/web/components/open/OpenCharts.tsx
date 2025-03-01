@@ -13,6 +13,7 @@ import {
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "./OpenCardUI";
 import { useTheme } from "next-themes";
+import { StatsData } from "@/types";
 
 const chartVariants = {
   hidden: { opacity: 0, scale: 0.95 },
@@ -23,11 +24,19 @@ const chartVariants = {
   },
 };
 
-const OpenCharts = ({ statsData }) => {
-  const { theme } = useTheme();
-  console.log("statsdata", statsData);
+interface CharConfig {
+  title: string;
+  data:
+    | { date: string }[]
+    | { date: string; count?: number; amount?: number }[];
+  key: "count" | "amount";
+  color: string;
+}
 
-  const chartConfig = [
+const OpenCharts: React.FC<{ statsData: StatsData }> = ({ statsData }) => {
+  const { theme } = useTheme();
+
+  const chartConfig: CharConfig[] = [
     {
       title: "Daily Users",
       data: statsData.charts?.dailyUsers,
@@ -53,61 +62,57 @@ const OpenCharts = ({ statsData }) => {
       color: "#ef4444",
     },
   ];
-  console.log("chartConfig", chartConfig);
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {(chartConfig || []).map((chart) => (
-        <motion.div
-          key={chart.title}
-          variants={chartVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          <Card className="bg-background/80 border-border/30 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-semibold text-foreground">
-                {chart.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-80">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chart.data}>
-                    <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke={theme === "dark" ? "#444" : "#ddd"}
-                    />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={(date) => format(new Date(date), "MMM dd")}
-                      stroke={theme === "dark" ? "#ccc" : "#666"}
-                    />
-                    <YAxis stroke={theme === "dark" ? "#ccc" : "#666"} />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: theme === "dark" ? "#333" : "#fff",
-                        border: "none",
-                        borderRadius: "8px",
-                        boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-                      }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey={chart.key}
-                      stroke={chart.color}
-                      strokeWidth={2}
-                      dot={{ r: 4 }}
-                      activeDot={{ r: 6 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-      ))}
-    </div>
-  );
+
+  return (chartConfig || []).map((chart: CharConfig) => (
+    <motion.div
+      key={chart.title}
+      variants={chartVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <Card className="bg-background/80 border-border/30 backdrop-blur-sm">
+        <CardHeader>
+          <CardTitle className="text-lg font-semibold text-foreground">
+            {chart.title}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={chart.data}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke={theme === "dark" ? "#444" : "#ddd"}
+                />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(date) => format(new Date(date), "MMM dd")}
+                  stroke={theme === "dark" ? "#ccc" : "#666"}
+                />
+                <YAxis stroke={theme === "dark" ? "#ccc" : "#666"} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: theme === "dark" ? "#333" : "#fff",
+                    border: "none",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey={chart.key}
+                  stroke={chart.color}
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+    </motion.div>
+  ));
 };
 
 export default OpenCharts;
