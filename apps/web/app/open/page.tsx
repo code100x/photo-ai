@@ -11,11 +11,9 @@ async function OpenPage() {
 
   return (
     <div className="min-h-screen bg-background py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl">
+      <div className="max-w-7xl mx-auto">
         <Header>Open Stats</Header>
-      </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-16">
         <StatCards stats={statsData?.data || {}} />
       </div>
     </div>
