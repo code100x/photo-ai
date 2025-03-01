@@ -3,22 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { BarChart2, DollarSign, Image, Package, Users } from "lucide-react";
-
-const Card = ({ className, children }) => (
-  <div className={`rounded-lg border p-4 ${className}`}>{children}</div>
-);
-
-const CardHeader = ({ className, children }) => (
-  <div className={`pb-2 ${className}`}>{children}</div>
-);
-
-const CardTitle = ({ className, children }) => (
-  <h3 className={`text-lg font-semibold ${className}`}>{children}</h3>
-);
-
-const CardContent = ({ className, children }) => (
-  <div className={className}>{children}</div>
-);
+import { Card, CardContent, CardHeader, CardTitle } from "./OpenCardUI";
 
 interface StateProps {
   stats: any;

@@ -2,6 +2,7 @@ import React from "react";
 import { BACKEND_URL } from "../config";
 import Header from "@/components/open/Header";
 import StatCards from "@/components/open/StatCards";
+import OpenCharts from "@/components/open/OpenCharts";
 
 async function OpenPage() {
   console.log("BACKEND_URL", BACKEND_URL);
@@ -15,6 +16,8 @@ async function OpenPage() {
         <Header>Open Stats</Header>
 
         <StatCards stats={statsData?.data || {}} />
+
+        <OpenCharts statsData={statsData?.data || []} />
       </div>
     </div>
   );
