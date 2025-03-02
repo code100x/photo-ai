@@ -14,6 +14,7 @@ import dotenv from "dotenv";
 
 import paymentRoutes from "./routes/payment.routes";
 import { router as webhookRouter } from "./routes/webhook.routes";
+import { router as imageRouter } from "./routes/getimage.routes";
 
 const IMAGE_GEN_CREDITS = 1;
 const TRAIN_MODEL_CREDITS = 20;
@@ -155,6 +156,7 @@ app.post("/ai/generate", authMiddleware, async (req, res) => {
 
   res.json({
     imageId: data.id,
+    falReqId: request_id
   });
 });
 
@@ -443,6 +445,7 @@ app.get("/model/status/:modelId", authMiddleware, async (req, res) => {
 
 app.use("/payment", paymentRoutes);
 app.use("/api/webhook", webhookRouter);
+app.use("/api/image/", imageRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
