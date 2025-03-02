@@ -4,9 +4,15 @@ import Heading from "@/components/open/Heading";
 import StatCards from "@/components/open/StatCards";
 import OpenCharts from "@/components/open/OpenCharts";
 
+async function getStatsData() {
+  const response = await fetch(`${BACKEND_URL}/open`, {
+    next: { revalidate: 3600 },
+  });
+  return response.json();
+}
+
 async function OpenPage() {
-  const response = await fetch(`${BACKEND_URL}/open`);
-  const statsData = await response.json();
+  const statsData = await getStatsData();
 
   return (
     <div className="min-h-screen bg-background py-20 px-4 sm:px-6 lg:px-8">
