@@ -16,7 +16,7 @@ router.post('/status/:falreqid', async (req, res) => {
             }
         })
 
-        res.json({ imageUrl: "https://v3.fal.media/files/elephant/VBTGCYry98QgJJPGBlkX6_ee4245ec81814803b3c0ca6da0e50eb4.jpg", status: image?.status })
+        res.json({ imageUrl: image?.imageUrl, status: image?.status })
     } catch (error) {
         console.error(error)
         res.status(403).json({ msg: "Error while fetching image" })
