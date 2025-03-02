@@ -2,6 +2,8 @@
 
 import { motion } from "framer-motion";
 import { Camera, Wand2, Users, Clock } from "lucide-react";
+import { Tilt } from "@/components/ui/tilt";
+import { Spotlight } from "@/components/ui/spotlight";
 
 const features = [
   {
@@ -39,24 +41,46 @@ export function Features() {
       className="mt-32 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
     >
       {features.map((feature, index) => (
-        <motion.div
+        <Tilt
           key={index}
-          whileHover={{ y: -10 }}
-          className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 border border-white/10 group"
+          rotationFactor={6}
+          isRevese
+          style={{
+            transformOrigin: 'center center',
+          }}
+          springOptions={{
+            stiffness: 26.7,
+            damping: 4.1,
+            mass: 0.2,
+          }}
+          className='group relative rounded-lg overflow-hidden' // Ensure overflow-hidden
         >
-          <div
-            className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.gradient} p-0.5 mb-4 group-hover:scale-110 transition-transform duration-300`}
+          <Spotlight
+            className='z-10 from-white/70 via-white/40 to-white/10 blur-[100px]' // Enhanced gradient and blur
+            size={300} // Larger size for a more pronounced effect
+            springOptions={{
+              stiffness: 26.7,
+              damping: 4.1,
+              mass: 0.2,
+            }}
+          />
+          <motion.div
+            className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 border border-white/10 group"
           >
-            <div className="w-full h-full bg-gray-900 rounded-[10px] flex items-center justify-center">
-              {feature.icon}
+            <div
+              className={`w-12 h-12 rounded-xl bg-gradient-to-r ${feature.gradient} p-0.5 mb-4 group-hover:scale-110 transition-transform duration-300`}
+            >
+              <div className="w-full h-full bg-gray-900 rounded-[10px] flex items-center justify-center">
+                {feature.icon}
+              </div>
             </div>
-          </div>
-          <h3 className="text-xl font-semibold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-            {feature.title}
-          </h3>
-          <p className="text-gray-400">{feature.description}</p>
-        </motion.div>
+            <h3 className="text-xl font-semibold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              {feature.title}
+            </h3>
+            <p className="text-gray-400">{feature.description}</p>
+          </motion.div>
+        </Tilt>
       ))}
     </motion.div>
   );
-} 
+}
