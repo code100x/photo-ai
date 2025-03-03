@@ -15,7 +15,7 @@ export function Testimonials() {
       <h2 className="text-4xl font-bold text-center mb-4 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
         Loved by Creators
       </h2>
-      <p className="text-gray-400 text-center mb-12 text-lg">
+      <p className="text-muted-foreground text-center mb-12 text-lg">
         Join thousands of satisfied users who have transformed their portraits
       </p>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -23,7 +23,7 @@ export function Testimonials() {
           <motion.div
             key={index}
             whileHover={{ y: -10 }}
-            className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm relative border border-white/10 group hover:bg-white/10 transition-all duration-300"
+            className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm relative border border-muted-foreground/10 group dark:hover:bg-white/10 hover:bg-pink-50 transition-all duration-300"
           >
             <div className="absolute -top-6 left-6">
               <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-purple-500">
@@ -35,7 +35,7 @@ export function Testimonials() {
               </div>
             </div>
             <Star className="absolute top-4 right-4 text-yellow-500 w-6 h-6" />
-            <p className="text-gray-300 mb-4 mt-6">{testimonial.text}</p>
+            <p className="text-accent-foreground/60 mb-4 mt-6">{testimonial.text}</p>
             <div>
               <p className="font-semibold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
                 {testimonial.author}

@@ -3,10 +3,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Train } from "@/components/Train";
 import { Packs } from "@/components/Packs";
 import { Camera } from "@/components/Camera";
-
+import { redirect } from "next/navigation";
+import { auth } from "@clerk/nextjs/server";
 export const dynamic = "force-dynamic";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const { userId } = await auth();
+
+  if (!userId) {
+    redirect("/");
+  }
+
   return (
     <div className="container mx-auto px-4 py-24 min-h-screen">
       <div className="max-w-6xl mx-auto space-y-8">

@@ -19,10 +19,11 @@ export const clerkWebhookHandler = async (req, res) => {
   const svix_signature = headers["svix-signature"];
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return res.status(400).json({
+    res.status(400).json({
       success: false,
       message: "Error: Missing svix headers",
     });
+    return;
   }
 
   let evt: any;
@@ -34,11 +35,12 @@ export const clerkWebhookHandler = async (req, res) => {
       "svix-signature": svix_signature as string,
     });
   } catch (err) {
-    console.log("Error: Could not verify webhook:", err.message);
-    return res.status(400).json({
+    console.log("Error: Could not verify webhook:", (err as Error).message);
+    res.status(400).json({
       success: false,
-      message: err.message,
+      message: (err as Error).message,
     });
+    return;
   }
 
   const { id } = evt.data;
@@ -78,9 +80,10 @@ export const clerkWebhookHandler = async (req, res) => {
     }
   } catch (error) {
     console.error("Error handling webhook:", error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+    return;
   }
-  return res.status(200).json({ success: true, message: "Webhook received" });
+
+  res.status(200).json({ success: true, message: "Webhook received" });
+  return;
 };

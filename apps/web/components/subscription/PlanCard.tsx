@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Switch } from "@/components/ui/switch";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { SignInButton } from "@clerk/nextjs";
 
 interface PlanCardProps {
   plan: {
@@ -12,56 +13,111 @@ interface PlanCardProps {
     credits: number;
     features: string[];
   };
-  onSelect: (isAnnual: boolean) => void;
+  onSelect: () => void;
 }
 
 export function PlanCard({ plan, onSelect }: PlanCardProps) {
-  const [isAnnual, setIsAnnual] = useState(false);
-  const annualPrice = Math.round(plan.price * 12 * 0.8); // 20% discount
+  const [isLoading, setIsLoading] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const isPremium = plan.type === "premium";
+
+  const handleClick = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+    try {
+      await onSelect();
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <Card className="p-8 rounded-2xl shadow-xl transition-all duration-300 ease-out hover:shadow-md hover:shadow-purple-600/50 border border-gray-200 dark:border-gray-700 transform hover:scale-102 hover:brightness-110">
-      {/* Plan Name */}
-      <h2 className="text-3xl font-extrabold mb-4 text-gray-900 dark:text-white">
-        {plan.name}
-      </h2>
-
-      {/* Pricing & Toggle */}
-      <div className="flex items-center justify-between mb-6">
-        <span className="text-4xl font-bold text-gray-900 dark:text-white">
-          ${isAnnual ? annualPrice : plan.price}
-        </span>
-        <div className="flex items-center gap-2 px-3 py-1 ">
-          <span className="text-gray-600 dark:text-gray-400 text-sm">
-            Monthly
-          </span>
-          <Switch checked={isAnnual} onCheckedChange={setIsAnnual} />
-          <span className="text-gray-900 dark:text-white font-medium text-sm">
-            Annual
+    <Card
+      className={`relative p-8 rounded-2xl shadow-xl transition-all duration-300 ease-out 
+      hover:shadow-2xl border-2 ${
+        isPremium
+          ? "border-purple-500/50 hover:border-purple-500 bg-gradient-to-b from-purple-50 to-transparent dark:from-purple-900/10"
+          : "border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600"
+      }`}
+    >
+      {isPremium && (
+        <div className="absolute -top-3 -right-3">
+          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 dark:bg-purple-900/50 dark:text-purple-200">
+            <Sparkles className="w-3 h-3" /> Popular
           </span>
         </div>
-      </div>
+      )}
 
-      {/* Features List */}
-      <ul className="mb-6 space-y-2">
-        {plan.features.map((feature) => (
-          <li
-            key={feature}
-            className="flex items-center gap-3 text-gray-700 dark:text-gray-300"
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-3xl font-extrabold mb-2 bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+            {plan.name}
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            One-time payment for {plan.credits} credits
+          </p>
+        </div>
+
+        <div className="flex items-baseline gap-1">
+          <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 dark:from-purple-400 dark:to-blue-400 bg-clip-text text-transparent">
+            ${plan.price}
+          </span>
+          <span className="text-gray-500 dark:text-gray-400">one-time</span>
+        </div>
+
+        <div className="space-y-3">
+          {plan.features.map((feature) => (
+            <li
+              key={feature}
+              className="flex items-center gap-3 text-gray-700 dark:text-gray-300 text-sm"
+            >
+              <CheckIcon
+                className={`w-5 h-5 ${
+                  isPremium
+                    ? "text-purple-500 dark:text-purple-400"
+                    : "text-green-500 dark:text-green-400"
+                }`}
+              />
+              {feature}
+            </li>
+          ))}
+        </div>
+
+        {isAuthenticated ? (
+          <Button
+            className={`w-full py-6 rounded-xl font-medium tracking-wide shadow-lg transition-all duration-300 cursor-pointer
+              ${
+                isPremium
+                  ? "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white hover:scale-[1.02] hover:shadow-xl"
+                  : "bg-gray-900 hover:bg-gray-800 text-white dark:bg-gray-800 dark:hover:bg-gray-700 hover:scale-[1.02] hover:shadow-xl"
+              }`}
+            onClick={handleClick}
+            disabled={isLoading}
           >
-            <CheckIcon className="w-5 h-5 text-green-500 dark:text-green-400" />
-            {feature}
-          </li>
-        ))}
-      </ul>
-
-      {/* Select Plan Button */}
-      <Button
-        className="w-full py-3 rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium tracking-wide shadow-lg transition-all hover:scale-105 hover:shadow-xl dark:from-blue-500 dark:to-blue-400"
-        onClick={() => onSelect(isAnnual)}
-      >
-        Select Plan
-      </Button>
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 border-t-2 border-b-2 border-current rounded-full animate-spin" />
+                Processing...
+              </div>
+            ) : (
+              `Get ${plan.credits} Credits`
+            )}
+          </Button>
+        ) : (
+          <SignInButton mode="modal">
+            <Button
+              className={`w-full py-6 rounded-xl font-medium tracking-wide shadow-lg transition-all duration-300 cursor-pointer
+                ${
+                  isPremium
+                    ? "bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white hover:scale-[1.02] hover:shadow-xl"
+                    : "bg-gray-900 hover:bg-gray-800 text-white dark:bg-gray-800 dark:hover:bg-gray-700 hover:scale-[1.02] hover:shadow-xl"
+                }`}
+            >
+              Sign in to Purchase
+            </Button>
+          </SignInButton>
+        )}
+      </div>
     </Card>
   );
 }

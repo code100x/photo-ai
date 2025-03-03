@@ -5,20 +5,26 @@ import { PlanCard } from "@/components/subscription/PlanCard";
 import { PlanType } from "@/types";
 import { usePayment } from "@/hooks/usePayment";
 import { motion } from "framer-motion";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function SubscriptionPage() {
-  const [selectedPlan, setSelectedPlan] = useState<{
-    plan: PlanType;
-    isAnnual: boolean;
-  } | null>(null);
+  const [, setSelectedPlan] = useState<PlanType | null>(null);
+  const { handlePayment } = usePayment();
+  const { isAuthenticated } = useAuth();
 
-  const { handlePayment, stripeLoading, razorpayLoading } = usePayment();
+  const handlePlanSelect = async (plan: PlanType) => {
+    if (!isAuthenticated) return;
+
+    setSelectedPlan(plan);
+    await handlePayment(plan, false, "razorpay");
+    setSelectedPlan(null);
+  };
 
   const plans = [
     {
       type: PlanType.basic,
       name: "Basic Plan",
-      price: 50, // $50
+      price: 50,
       credits: 500,
       features: [
         "500 Credits",
@@ -31,7 +37,7 @@ export default function SubscriptionPage() {
     {
       type: PlanType.premium,
       name: "Premium Plan",
-      price: 100, // $100
+      price: 100,
       credits: 1000,
       features: [
         "1000 Credits",
@@ -44,20 +50,8 @@ export default function SubscriptionPage() {
     },
   ] as const;
 
-  const handlePlanSelect = (plan: PlanType, isAnnual: boolean) => {
-    setSelectedPlan({ plan, isAnnual });
-    handlePaymentSubmit("razorpay")
-  };
-
-  const handlePaymentSubmit = async (method: "stripe" | "razorpay") => {
-    if (!selectedPlan) return;
-
-    await handlePayment(selectedPlan.plan, selectedPlan.isAnnual, method);
-    setSelectedPlan(null);
-  };
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12 ">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-12">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 25 }}
@@ -89,11 +83,10 @@ export default function SubscriptionPage() {
               credits: plan.credits,
               features: [...plan.features],
             }}
-            onSelect={(isAnnual) => handlePlanSelect(plan.type, isAnnual)}
+            onSelect={() => handlePlanSelect(plan.type)}
           />
         ))}
       </motion.div>
-
     </div>
   );
 }

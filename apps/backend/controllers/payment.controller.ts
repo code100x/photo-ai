@@ -20,7 +20,7 @@ export const createPayment = async (
 ) => {
   try {
     const { plan, isAnnual, method } = req.body;
-    const userId = req.userId;
+    const userId = req.userId!;
     const userEmail = (req as any).user?.email;
 
     console.log("Payment request received:", {
@@ -52,7 +52,6 @@ export const createPayment = async (
         const session = await createStripeSession(
           userId,
           plan as "basic" | "premium",
-          isAnnual,
           userEmail
         );
         console.log("Stripe session created:", session);
@@ -73,11 +72,7 @@ export const createPayment = async (
 
     if (method === "razorpay") {
       try {
-        const order = await PaymentService.createRazorpayOrder(
-          userId,
-          plan,
-          isAnnual
-        );
+        const order = await PaymentService.createRazorpayOrder(userId, plan);
         console.log("Razorpay order created successfully:", order);
         res.json(order);
         return;
@@ -222,6 +217,8 @@ export const verifyRazorpay = async (
         paymentId: razorpay_payment_id,
         orderId: razorpay_order_id,
         signature: razorpay_signature,
+        plan: plan as PlanType,
+        userId: req.userId!,
       });
 
       if (!isValid) {

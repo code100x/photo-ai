@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import { PaymentCancelContent } from "@/components/payment/PaymentCancelContent";
+import { VerifyContent } from "@/components/payment/VerifyContent";
 
-export default function PaymentCancelPage() {
+export default function VerifyPage() {
   return (
     <Suspense
       fallback={
@@ -12,7 +12,7 @@ export default function PaymentCancelPage() {
         </div>
       }
     >
-      <PaymentCancelContent />
+      <VerifyContent />
     </Suspense>
   );
 }

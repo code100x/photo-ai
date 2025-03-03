@@ -123,7 +123,7 @@ export function ImageCarousel() {
                           ? image.title
                           : ""}
                       </h3>
-                      <p className="text-sm text-gray-200">
+                      <p className="text-sm text-neutral-200">
                         {typeof image === "object" && "description" in image
                           ? image.description
                           : ""}
@@ -141,7 +141,7 @@ export function ImageCarousel() {
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors border border-white/20"
+            className="p-3 rounded-full bg-neutral-100/60 hover:bg-neutral-200/60 backdrop-blur-sm transition-colors border border-neutral-200/60 text-neutral-700"
             onClick={scrollPrev}
           >
             <ArrowLeft className="w-5 h-5" />
@@ -150,22 +150,22 @@ export function ImageCarousel() {
           <div className="flex gap-3">
             {scrollSnaps.map((_, i) => (
               <motion.button
-                key={i}
-                className="group relative"
-                onClick={() => scrollTo(i)}
+          key={i}
+          className="group relative"
+          onClick={() => scrollTo(i)}
               >
-                <div className="w-12 h-1.5 rounded-full bg-white/20 overflow-hidden">
-                  {i === selectedIndex && (
-                    <motion.div
-                      className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500"
-                      layoutId="activeSlide"
-                      transition={{
-                        type: "spring",
-                        bounce: 0.2,
-                      }}
-                    />
-                  )}
-                </div>
+          <div className="w-12 h-1.5 rounded-full bg-neutral-200 overflow-hidden">
+            {i === selectedIndex && (
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600"
+                layoutId="activeSlide"
+                transition={{
+            type: "spring",
+            bounce: 0.2,
+                }}
+              />
+            )}
+          </div>
               </motion.button>
             ))}
           </div>
@@ -173,7 +173,7 @@ export function ImageCarousel() {
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            className="p-3 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-sm transition-colors border border-white/20"
+            className="p-3 rounded-full bg-neutral-100/60 hover:bg-neutral-200/60 backdrop-blur-sm transition-colors border border-neutral-200/60 text-neutral-700"
             onClick={scrollNext}
           >
             <ArrowRight className="w-5 h-5" />
