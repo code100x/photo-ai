@@ -16,8 +16,8 @@ export function StatsSection() {
       transition={{ duration: 0.8 }}
       className="relative"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 via-transparent to-transparent" />
-      <div className="relative grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+      <div className="absolute rounded-t-2xl inset-0 bg-gradient-to-b from-purple-500/10 via-transparent to-transparent" />
+      <div className="relative pt-4 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
@@ -31,7 +31,7 @@ export function StatsSection() {
             <div className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
               {stat.value}
             </div>
-            <p className="text-gray-400 text-sm md:text-base">{stat.label}</p>
+            <p className="text-muted-foreground text-sm md:text-base">{stat.label}</p>
           </motion.div>
         ))}
       </div>

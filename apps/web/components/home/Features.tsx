@@ -54,6 +54,8 @@ export function Features() {
             mass: 0.2,
           }}
           className='group relative rounded-lg overflow-hidden' // Ensure overflow-hidden
+          whileHover={{ y: -10 }}
+          className="p-6 rounded-2xl bg-white/5 backdrop-blur-sm hover:bg-pink-50 dark:hover:bg-white/10 transition-all duration-300 border dark:border-white/10 border-pink-100 group"
         >
           <Spotlight
             className='z-10 from-white/70 via-white/40 to-white/10 blur-[100px]' // Enhanced gradient and blur
@@ -80,6 +82,15 @@ export function Features() {
             <p className="text-gray-400">{feature.description}</p>
           </motion.div>
         </Tilt>
+            <div className="w-full h-full bg-neutral-900 rounded-[10px] flex items-center justify-center">
+              {feature.icon}
+            </div>
+          </div>
+            <h3 className="text-xl font-semibold mb-2 dark:bg-gradient-to-r dark:from-white dark:to-neutral-300 bg-gradient-to-r from-neutral-900 to-neutral-700 bg-clip-text text-transparent">
+            {feature.title}
+            </h3>
+          <p className="text-muted-foreground">{feature.description}</p>
+        </motion.div>
       ))}
     </motion.div>
   );
