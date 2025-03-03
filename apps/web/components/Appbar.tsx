@@ -6,6 +6,7 @@ import { Button } from "./ui/button";
 import { Credits } from "./navbar/Credits";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Appbar() {
   const [isScrolled, setIsScrolled] = useState(false);
