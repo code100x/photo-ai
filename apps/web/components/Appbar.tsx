@@ -27,7 +27,7 @@ export function Appbar() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 href="/"
-                className="flex items-center space-x-2 transition-opacity hover:opacity-90"
+                className="flex items-center space-x-1 transition-opacity hover:opacity-90"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +42,7 @@ export function Appbar() {
                   <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
                 </svg>
                 <span className="hidden font-bold font-mono text-xl sm:inline-block">
-                  100xPhoto
+                  100<span className="text-pink-500">x</span>Photos
                 </span>
               </Link>
             </motion.div>
@@ -57,7 +57,7 @@ export function Appbar() {
                   asChild
                 >
                   <Link href="/dashboard">Dashboard</Link>
-                </Button> 
+                </Button>
                 <Button
                   variant="ghost"
                   size="sm"

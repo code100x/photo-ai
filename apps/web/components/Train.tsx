@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,15 +20,24 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { UploadModal } from "@/components/ui/upload";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { BACKEND_URL } from "@/app/config";
+import { BACKEND_URL, CLOUDFLARE_URL } from "@/app/config";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, X } from "lucide-react";
+import { X, ImageIcon } from "lucide-react";
 import { useCredits } from "@/hooks/use-credits";
+import Image from "next/image";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import JSZip from "jszip";
 
 interface UploadedFile {
   name: string;
@@ -48,6 +58,9 @@ export function Train() {
   const router = useRouter();
   const { credits } = useCredits();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [previewFiles, setPreviewFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   async function trainModal() {
     if (credits <= 0) {
@@ -57,7 +70,7 @@ export function Train() {
     const input = {
       zipUrl,
       type,
-      age: parseInt(age ?? "0"),
+      age: Number.parseInt(age ?? "0"),
       ethinicity,
       eyeColor,
       bald,
@@ -77,6 +90,7 @@ export function Train() {
       toast.error("Failed to start model training");
     } finally {
       setModelTraining(false);
+      setPreviewFiles([]);
     }
   }
 
@@ -90,257 +104,345 @@ export function Train() {
     });
   };
 
+  const handleUpload = async (files: File[]) => {
+    setIsUploading(true);
+    setUploadProgress(0);
+    setPreviewFiles(files);
+
+    try {
+      const zip = new JSZip();
+      const res = await axios.get(`${BACKEND_URL}/pre-signed-url`);
+      const { url, key } = res.data;
+
+      const fileNames: string[] = [];
+      for (const file of files) {
+        zip.file(file.name, await file.arrayBuffer());
+        fileNames.push(file.name);
+        setUploadProgress((prev) => Math.min(prev + 50 / files.length, 50));
+      }
+
+      const content = await zip.generateAsync({ type: "blob" });
+      await axios.put(url, content, {
+        onUploadProgress: (progressEvent) => {
+          setUploadProgress(
+            50 + Math.round((progressEvent.loaded * 50) / progressEvent.total!)
+          );
+        },
+      });
+
+      // onUploadDone(`${CLOUDFLARE_URL}/${key}`, fileNames);
+      setZipUrl(zipUrl);
+      setUploadedFiles((prev) => [
+        ...prev,
+        ...fileNames.map((name) => ({
+          name,
+          status: "uploaded" as const,
+          timestamp: new Date(),
+        })),
+      ]);
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
   return (
     <motion.div
-      className="flex flex-col items-center justify-center pt-4"
+      className="flex flex-col items-center justify-center pt-4 md:px-4"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="w-full max-w-2xl">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Brain className="h-6 w-6 text-primary" />
-            <div>
-              <CardTitle>Train New Model</CardTitle>
-              <CardDescription>
-                Create a custom AI model with your photos
-              </CardDescription>
-            </div>
+      <div className="w-full">
+        <div className="flex items-center gap-2 mb-4">
+          <div>
+            <h1 className="md:text-2xl text-xl font-semibold">Train New Model</h1>
+            <p className="md:text-sm text-xs text-muted-foreground">
+              Create a custom AI model with your photos
+            </p>
           </div>
-        </CardHeader>
-        <CardContent>
-          <motion.div
-            className="grid gap-6"
-            initial="hidden"
-            animate="visible"
-            variants={{
-              hidden: { opacity: 0 },
-              visible: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.1,
-                },
-              },
-            }}
-          >
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Model Name</Label>
-                <Input
-                  id="name"
-                  placeholder="Enter model name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="age">Age</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  placeholder="Enter age"
-                  value={age}
-                  onChange={(e) => setAge(e.target.value)}
-                />
-              </div>
-            </div>
+        </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Type</Label>
-                <Select value={type} onValueChange={setType}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Man">Man</SelectItem>
-                    <SelectItem value="Woman">Woman</SelectItem>
-                    <SelectItem value="Others">Others</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Ethnicity</Label>
-                <Select value={ethinicity} onValueChange={setEthinicity}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select ethnicity" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="White">White</SelectItem>
-                    <SelectItem value="Black">Black</SelectItem>
-                    <SelectItem value="Asian_American">
-                      Asian American
-                    </SelectItem>
-                    <SelectItem value="East_Asian">East Asian</SelectItem>
-                    <SelectItem value="South_East_Asian">
-                      South East Asian
-                    </SelectItem>
-                    <SelectItem value="South_Asian">South Asian</SelectItem>
-                    <SelectItem value="Middle_Eastern">
-                      Middle Eastern
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Eye Color</Label>
-                <Select value={eyeColor} onValueChange={setEyeColor}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select eye color" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Brown">Brown</SelectItem>
-                    <SelectItem value="Blue">Blue</SelectItem>
-                    <SelectItem value="Hazel">Hazel</SelectItem>
-                    <SelectItem value="Gray">Gray</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Bald</Label>
-                <div className="flex items-center space-x-2 pt-2">
-                  <Switch checked={bald} onCheckedChange={setBald} />
-                  <span className="text-sm text-muted-foreground">
-                    {bald ? "Yes" : "No"}
-                  </span>
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card className="h-full border-none shadow-none ">
+            <CardContent className="p-0">
+              <motion.div
+                className="grid gap-6"
+                initial="hidden"
+                animate="visible"
+                variants={{
+                  hidden: { opacity: 0 },
+                  visible: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.1,
+                    },
+                  },
+                }}
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="name">Model Name</Label>
+                  <Input
+                    id="name"
+                    placeholder="Enter model name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
                 </div>
-              </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label>Photos</Label>
-              <div className="rounded-lg border border-dashed p-4">
-                <UploadModal
-                  onUploadDone={(zipUrl, fileNames) => {
-                    setZipUrl(zipUrl);
-                    setUploadedFiles((prev) => [
-                      ...prev,
-                      ...fileNames.map((name) => ({
-                        name,
-                        status: "uploaded" as const,
-                        timestamp: new Date(),
-                      })),
-                    ]);
-                  }}
-                />
-                <AnimatePresence>
-                  {uploadedFiles.length > 0 && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="mt-4 space-y-2"
-                    >
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                          Uploaded Files ({uploadedFiles.length})
-                        </p>
-                        {uploadedFiles.length > 1 && (
-                          <button
-                            onClick={() => {
-                              setUploadedFiles([]);
-                              setZipUrl("");
-                            }}
-                            className="text-xs text-red-500 hover:text-red-600 transition-colors"
-                          >
-                            Remove all
-                          </button>
-                        )}
-                      </div>
-                      <div className="max-h-32 overflow-y-auto space-y-1 scrollbar-thin scrollbar-thumb-zinc-200 dark:scrollbar-thumb-zinc-800">
-                        <AnimatePresence>
-                          {uploadedFiles.map((file, index) => (
-                            <motion.div
-                              key={`${file.name}-${index}`}
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: 20 }}
-                              transition={{ duration: 0.2 }}
-                              className="flex items-center justify-between text-sm p-2 rounded-md 
-                                       bg-zinc-50 dark:bg-zinc-900 group hover:bg-zinc-100 
-                                       dark:hover:bg-zinc-800 transition-colors"
+                <div className="grid grid-cols-4 gap-4">
+                  <div className="space-y-2 col-span-2">
+                    <Label>Type</Label>
+                    <Select value={type} onValueChange={setType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Man">Man</SelectItem>
+                        <SelectItem value="Woman">Woman</SelectItem>
+                        <SelectItem value="Others">Others</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="age">Age</Label>
+                    <Input
+                      id="age"
+                      type="number"
+                      placeholder="Enter age"
+                      value={age}
+                      onChange={(e) => setAge(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Bald</Label>
+                    <div className="flex items-center space-x-2 pt-2">
+                      <Switch
+                        className="data-[state=checked]:bg-green-400 data-[state=unchecked]:bg-input"
+                        checked={bald}
+                        onCheckedChange={setBald}
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        {bald ? "Yes" : "No"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Ethnicity</Label>
+                    <Select value={ethinicity} onValueChange={setEthinicity}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select ethnicity" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="White">White</SelectItem>
+                        <SelectItem value="Black">Black</SelectItem>
+                        <SelectItem value="Asian_American">
+                          Asian American
+                        </SelectItem>
+                        <SelectItem value="East_Asian">East Asian</SelectItem>
+                        <SelectItem value="South_East_Asian">
+                          South East Asian
+                        </SelectItem>
+                        <SelectItem value="South_Asian">South Asian</SelectItem>
+                        <SelectItem value="Middle_Eastern">
+                          Middle Eastern
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Eye Color</Label>
+                    <Select value={eyeColor} onValueChange={setEyeColor}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select eye color" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Brown">Brown</SelectItem>
+                        <SelectItem value="Blue">Blue</SelectItem>
+                        <SelectItem value="Hazel">Hazel</SelectItem>
+                        <SelectItem value="Gray">Gray</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <UploadModal
+                    handleUpload={handleUpload}
+                    isUploading={isUploading}
+                    uploadProgress={uploadProgress}
+                  />
+                  <AnimatePresence>
+                    {uploadedFiles.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="my-4 space-y-2"
+                      >
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                            Uploaded Files ({uploadedFiles.length})
+                          </p>
+                          {uploadedFiles.length > 1 && (
+                            <button
+                              onClick={() => {
+                                setUploadedFiles([]);
+                                setZipUrl("");
+                              }}
+                              className="text-xs text-red-500 cursor-pointer bg-red-500/20 border border-red-500/60 px-3 py-1 rounded-lg font-semibold hover:text-red-600 transition-colors"
                             >
-                              <div className="flex items-center space-x-2">
-                                <motion.svg
-                                  className="w-4 h-4 text-green-500 flex-shrink-0"
-                                  fill="none"
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  viewBox="0 0 24 24"
-                                  stroke="currentColor"
-                                  initial={{ scale: 0 }}
-                                  animate={{ scale: 1 }}
-                                  transition={{ delay: 0.2 }}
-                                >
-                                  <path d="M5 13l4 4L19 7" />
-                                </motion.svg>
-                                <span
-                                  className="truncate max-w-[200px]"
-                                  title={file.name}
-                                >
-                                  {file.name}
-                                </span>
+                              Remove all
+                            </button>
+                          )}
+                        </div>
+                        <div className="max-h-32 overflow-y-auto space-y-1 scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-neutral-800">
+                          <AnimatePresence>
+                            {uploadedFiles.map((file, index) => (
+                              <motion.div
+                                key={`${file.name}-${index}`}
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                transition={{ duration: 0.2 }}
+                                className="flex items-center justify-between text-sm p-2 rounded-md 
+                                           bg-neutral-50 dark:bg-neutral-900 group hover:bg-neutral-100 
+                                           dark:hover:bg-neutral-800 transition-colors"
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <motion.svg
+                                    className="w-4 h-4 text-green-500 flex-shrink-0"
+                                    fill="none"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    transition={{ delay: 0.2 }}
+                                  >
+                                    <path d="M5 13l4 4L19 7" />
+                                  </motion.svg>
+                                  <span
+                                    className="truncate max-w-[200px]"
+                                    title={file.name}
+                                  >
+                                    {file.name}
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <span className="text-xs text-neutral-500">
+                                    {new Date(
+                                      file.timestamp
+                                    ).toLocaleTimeString()}
+                                  </span>
+                                  <button
+                                    onClick={() => handleRemoveFile(index)}
+                                    className="p-1 rounded-full hover:bg-neutral-200 cursor-pointer dark:hover:bg-neutral-700 
+                                               text-neutral-400 hover:text-red-500 transition-all
+                                               opacity-0 group-hover:opacity-100 focus:opacity-100
+                                               focus:outline-none focus:ring-2 focus:ring-red-500/20"
+                                    title="Remove file"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </button>
+                                </div>
+                              </motion.div>
+                            ))}
+                          </AnimatePresence>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </motion.div>
+            </CardContent>
+            <CardFooter className="flex justify-end px-0">
+              <Button
+                onClick={trainModal}
+                disabled={
+                  modelTraining ||
+                  !name ||
+                  !zipUrl ||
+                  !type ||
+                  !age ||
+                  !ethinicity ||
+                  !eyeColor
+                }
+                className="gap-2"
+              >
+                {modelTraining ? (
+                  <>Training...</>
+                ) : (
+                  <>Train Model (20 credits)</>
+                )}
+              </Button>
+            </CardFooter>
+          </Card>
+
+          {/* Right Column - Image Preview */}
+          <Card className="h-full border-l-0 md:border-l border-r-0 border-t-0 border-b-0 shadow-none rounded-none">
+            <CardHeader>
+              <CardTitle>Image Preview</CardTitle>
+              <CardDescription>Preview of your uploaded images</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col items-center w-full h-full">
+              {previewFiles.length > 0 ? (
+                <Carousel className="w-full md:max-w-md max-w-xs">
+                  <CarouselContent>
+                    {previewFiles.map((file, index) => {
+                      const imageUrl = URL.createObjectURL(file);
+                      return (
+                        <CarouselItem key={index}>
+                          <div className="p-1">
+                            <div className="flex flex-col items-center  p-2">
+                              <div className="relative aspect-square w-full md:max-w-[400px] max-w-[200px] overflow-hidden rounded-xl">
+                                <Image
+                                  src={imageUrl}
+                                  alt={file.name}
+                                  fill
+                                  className="object-cover"
+                                  onLoad={() => URL.revokeObjectURL(imageUrl)}
+                                />
                               </div>
-                              <div className="flex items-center space-x-2">
-                                <span className="text-xs text-zinc-500">
-                                  {new Date(
-                                    file.timestamp
-                                  ).toLocaleTimeString()}
-                                </span>
-                                <button
-                                  onClick={() => handleRemoveFile(index)}
-                                  className="p-1 rounded-full hover:bg-zinc-200 dark:hover:bg-zinc-700 
-                                           text-zinc-400 hover:text-red-500 transition-all
-                                           opacity-0 group-hover:opacity-100 focus:opacity-100
-                                           focus:outline-none focus:ring-2 focus:ring-red-500/20"
-                                  title="Remove file"
-                                >
-                                  <X className="h-4 w-4" />
-                                </button>
-                              </div>
-                            </motion.div>
-                          ))}
-                        </AnimatePresence>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
-          </motion.div>
-        </CardContent>
-        <CardFooter className="flex justify-between">
-          <div></div>
-          <Button
-            onClick={trainModal}
-            disabled={
-              modelTraining ||
-              !name ||
-              !zipUrl ||
-              !type ||
-              !age ||
-              !ethinicity ||
-              !eyeColor
-            }
-            className="gap-2"
-          >
-            {modelTraining ? (
-              <>Training...</>
-            ) : (
-              <>
-                <Brain className="h-4 w-4" />
-                Train Model (20 credits)
-              </>
-            )}
-          </Button>
-        </CardFooter>
-      </Card>
+                              <p className="mt-2 text-sm font-medium text-center truncate max-w-[250px]">
+                                {file.name}
+                              </p>
+                            </div>
+                          </div>
+                        </CarouselItem>
+                      );
+                    })}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-2" />
+                  <CarouselNext className="right-2" />
+                </Carousel>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-6 text-center">
+                  <div className="flex h-40 w-40 items-center justify-center rounded-full bg-muted mb-4">
+                    <ImageIcon className="h-20 w-20 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-medium">No images uploaded</h3>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Upload images using the form on the left to see previews
+                    here
+                  </p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </motion.div>
   );
 }

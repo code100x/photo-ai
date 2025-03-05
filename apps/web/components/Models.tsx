@@ -25,7 +25,7 @@ export function SelectModel({
   selectedModel?: string;
 }) {
   const { getToken } = useAuth();
-  const [modelLoading, setModalLoading] = useState(true);
+  const [modelLoading, setModalLoading] = useState(false);
   const [models, setModels] = useState<TModel[]>([]);
 
   useEffect(() => {
@@ -60,9 +60,9 @@ export function SelectModel({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Step 1 -Select Model
+        <div className="md:space-y-1">
+          <h2 className="md:text-2xl text-xl font-semibold tracking-tight">
+            Select Model
           </h2>
           <p className="text-sm text-muted-foreground">
             Choose an AI model to generate your images
@@ -77,14 +77,14 @@ export function SelectModel({
       </div>
 
       {modelLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {[1, 2, 3].map((_, i) => (
             <Card key={i} className="h-[220px] animate-pulse bg-muted/50" />
           ))}
         </div>
       ) : (
         <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4"
           variants={container}
           initial="hidden"
           animate="show"
@@ -95,7 +95,7 @@ export function SelectModel({
               <motion.div key={model.id} variants={item}>
                 <Card
                   className={cn(
-                    "group relative overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer",
+                    "group relative max-w-96 overflow-hidden transition-all duration-300 hover:shadow-xl cursor-pointer",
                     selectedModel === model.id && "ring-2 ring-primary"
                   )}
                   onClick={() => setSelectedModel(model.id)}

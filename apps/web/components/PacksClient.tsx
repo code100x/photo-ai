@@ -19,11 +19,11 @@ export function PacksClient({ packs }: { packs: TPack[] }) {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/50 max-w-2xl mx-auto">
-      <div className="container mx-auto px-8 border pt-4">
+    <div className="min-h-screen bg-gradient-to-b from-background to-background/50 mx-auto">
+      <div className="container mx-auto md:px-8 pt-4">
         {/* Filters Section */}
         <motion.div 
-          className="bg-card rounded-lg mb-8 shadow-lg"
+          className="rounded-lg mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -38,9 +38,9 @@ export function PacksClient({ packs }: { packs: TPack[] }) {
           </div>
         </motion.div>
 
-        <div className="space-y-1">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            Step 2 -Select Pack
+        <div className="md:space-y-1">
+          <h2 className="md:text-2xl text-xl font-semibold tracking-tight">
+            Select Pack
           </h2>
           <p className="text-sm text-muted-foreground">
             Chose a pack to generate images with
@@ -66,8 +66,8 @@ export function PacksClient({ packs }: { packs: TPack[] }) {
             }
           }}
         >
-          {filteredPacks.length > 0 ? (
-            filteredPacks.map((pack, index) => (
+          {packs.length > 0 ? (
+            packs.map((pack, index) => (
               <motion.div
                 key={pack.id}
                 variants={{

@@ -1,4 +1,5 @@
 "use client";
+
 import { useAuth } from "@clerk/nextjs";
 import { BACKEND_URL } from "@/app/config";
 import axios from "axios";
@@ -102,22 +103,22 @@ export function Camera() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Your Gallery</h2>
-        <span className="text-sm text-muted-foreground">
+        <span className="text-xs select-none bg-secondary/40 font-semibold border border-secondary text-muted-foreground px-2 py-1 rounded-full">
           {images.length} images
         </span>
       </div>
 
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4"
+        className="columns-1 md:columns-3 lg:columns-3 gap-4"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         {imagesLoading
-          ? [...Array(4)].map((_, i) => (
+          ? [...Array(8)].map((_, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0 }}
@@ -130,7 +131,7 @@ export function Camera() {
           : images.map((image, index) => (
               <div
                 key={image.id}
-                className="cursor-pointer transition-transform hover:scale-[1.02]"
+                className="cursor-pointer transition-transform mb-4 hover:scale-[1.02]"
                 onClick={() => handleImageClick(image, index)}
                 role="button"
                 tabIndex={0}
@@ -141,6 +142,7 @@ export function Camera() {
                 }}
               >
                 <ImageCard
+                  title={image.prompt}
                   id={image.id}
                   imageUrl={image.imageUrl}
                   status={image.status}
@@ -150,8 +152,8 @@ export function Camera() {
       </motion.div>
 
       {!imagesLoading && images.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground">
+        <div className="text-center py-12 bg-secondary/10 rounded-lg border border-secondary/50">
+          <p className="text-muted-foreground text-sm font-semibold">
             No images yet. Start by generating some!
           </p>
         </div>
@@ -161,8 +163,8 @@ export function Camera() {
         open={!!selectedImage}
         onOpenChange={() => setSelectedImage(null)}
       >
-        <DialogContent className="max-w-7xl w-[95vw] p-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <DialogHeader className="mb-4">
+        <DialogContent className="max-w-7xl w-[95vw] p-6 bg-background backdrop-blur rounded-none">
+          <DialogHeader className="mb-4 rounded-none">
             <DialogTitle className="text-2xl font-bold tracking-tight">
               {selectedImage?.prompt}
             </DialogTitle>
@@ -181,7 +183,7 @@ export function Camera() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="relative w-full h-[70vh] overflow-hidden rounded-lg bg-muted/30">
+          <div className="relative w-full h-[70vh] overflow-hidden bg-muted">
             {selectedImage && (
               <div className="group relative w-full h-full flex items-center justify-center">
                 <Image
@@ -225,7 +227,7 @@ export function Camera() {
                 {currentImageIndex + 1} of {images.length}
               </span>
               <Button
-                variant="outline"
+                variant="custom"
                 onClick={() =>
                   selectedImage &&
                   handleDownload(
@@ -233,7 +235,7 @@ export function Camera() {
                     selectedImage.prompt || "generated-image"
                   )
                 }
-                className="hover:bg-muted/80"
+                className="cusror-pointer"
               >
                 <Download className="h-4 w-4 mr-2" />
                 Download
