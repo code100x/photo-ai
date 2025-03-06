@@ -2,9 +2,12 @@ FROM oven/bun:1
 
 WORKDIR /usr/src/app
 
-COPY . .
+COPY package.json bun.lockb ./
 
 RUN bun install
+
+COPY . .
+
 
 RUN bunx turbo build --filter=backend...
 RUN bun run generate:db

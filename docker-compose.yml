@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD = mypassword
+      - POSTGRES_USER = myuser
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - pgdata:/var/lib/postgresql
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    restart: always
+    container_name: backend-service
+    ports:
+      - 8080:8080
+    environment: 
+      - FAL_KEY=""
+      - S3_ACCESS_KEY=""
+      - S3_SECRET_KEY=""
+      - BUCKET_NAME=""
+      - ENDPOINT=""
+      - RAZORPAY_KEY_ID=""
+      - RAZORPAY_KEY_SECRET=""
+      - SIGNING_SECRET=""
+      - CLERK_JWT_PUBLIC_KEY=""
+      - WEBHOOK_BASE_URL=""
+      - FRONTEND_URL=""
+      - CLERK_SECRET_KEY=
+      - CLERK_ISSUER=
+      - STRIPE_SECRET_KEY=""
+    depends_on:
+      - postgres
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    restart: always
+    container_name: frontend-service
+    ports:
+      - 3000:3000
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=http://backend:8080
+      - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+      - CLERK_SECRET_KEY=
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:

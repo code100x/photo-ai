@@ -4,9 +4,12 @@ ARG CLERK_PUBLISHABLE_KEY
 
 WORKDIR /usr/src/app
 
-COPY . .
+COPY package.json bun.lockb ./
+
 
 RUN bun install
+
+COPY . .
 
 RUN NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_Y2xlcmsuMTAweGRldnMuY29tJA NEXT_PUBLIC_BACKEND_URL=https://api.photoaiv2.100xdevs.com NEXT_PUBLIC_STRIPE_KEY=pk_test_51QsCmFEI53oUr5PHZw5ErO4Xy2lNh9LkH9vXDb8wc7BOvfSPc0i4xt6I5Qy3jaBLnvg9wPenPoeW0LvQ1x3GtfUm00eNFHdBDd NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_Y2xlcmsuMTAweGRldnMuY29tJA bunx turbo build --filter=web...
 
