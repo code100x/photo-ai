@@ -14,6 +14,7 @@ import dotenv from "dotenv";
 
 import paymentRoutes from "./routes/payment.routes";
 import { router as webhookRouter } from "./routes/webhook.routes";
+import { router as packRoutes } from "./routes/packs.routes";
 
 const IMAGE_GEN_CREDITS = 1;
 const TRAIN_MODEL_CREDITS = 20;
@@ -231,13 +232,7 @@ app.post("/pack/generate", authMiddleware, async (req, res) => {
   });
 });
 
-app.get("/pack/bulk", async (req, res) => {
-  const packs = await prismaClient.packs.findMany({});
 
-  res.json({
-    packs,
-  });
-});
 
 app.get("/image/bulk", authMiddleware, async (req, res) => {
   const ids = req.query.ids as string[];
@@ -443,6 +438,7 @@ app.get("/model/status/:modelId", authMiddleware, async (req, res) => {
 
 app.use("/payment", paymentRoutes);
 app.use("/api/webhook", webhookRouter);
+app.use("/pack", packRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

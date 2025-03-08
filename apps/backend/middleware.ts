@@ -7,6 +7,7 @@ declare global {
     interface Request {
       userId?: string;
       user?: {
+        role?: "admin" | "user";
         email: string;
       };
     }
@@ -19,6 +20,7 @@ export async function authMiddleware(
   next: NextFunction
 ) {
   try {
+    console.log("Authenticating request");
     const authHeader = req.headers["authorization"];
     const token = authHeader?.split(" ")[1];
 
@@ -26,7 +28,7 @@ export async function authMiddleware(
       res.status(401).json({ message: "No token provided" });
       return;
     }
-
+    
     // Debug logs
     console.log("Received token:", token);
 
@@ -62,6 +64,7 @@ export async function authMiddleware(
 
     // Fetch user details from Clerk
     const user = await clerkClient.users.getUser(userId);
+    console.log("User details:", user); 
     const primaryEmail = user.emailAddresses.find(
       (email) => email.id === user.primaryEmailAddressId
     );
@@ -70,11 +73,13 @@ export async function authMiddleware(
       console.error("No email found for user");
       res.status(400).json({ message: "User email not found" });
       return;
+
     }
 
     // Attach the user ID and email to the request
     req.userId = userId;
     req.user = {
+      role: (user.publicMetadata.role as "admin" | "user") || "user",
       email: primaryEmail.emailAddress,
     };
 
@@ -98,4 +103,21 @@ export async function authMiddleware(
     });
     return;
   }
+}
+
+export async function adminMiddleware(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  console.log("Checking user role");
+  await authMiddleware(req, res, () => {
+    console.log("User role:", req.user?.role);
+    if (req.user?.role !== "admin") {
+      res.status(403).json({ error: "Unauthorized" });
+      return;
+    }
+
+    next();
+  });
 }

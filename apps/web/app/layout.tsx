@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Appbar } from "@/components/Appbar";
 import { Providers } from "@/components/providers/Providers";
-import { Footer } from "@/components/Footer";
 import Script from "next/script";
 
 const geistSans = localFont({
@@ -41,9 +39,7 @@ export default function RootLayout({
       >
         <Providers>
           <div className="relative flex min-h-screen flex-col">
-            <Appbar />
             <main className="flex-1">{children}</main>
-            <Footer />
           </div>
         </Providers>
       </body>

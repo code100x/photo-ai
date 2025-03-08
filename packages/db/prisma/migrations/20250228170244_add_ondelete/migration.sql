@@ -1,0 +1,9 @@
+-- DropForeignKey
+ALTER TABLE "PackPrompts" DROP CONSTRAINT "PackPrompts_packId_fkey";
+
+-- AlterTable
+ALTER TABLE "PackPrompts" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- AddForeignKey
+ALTER TABLE "PackPrompts" ADD CONSTRAINT "PackPrompts_packId_fkey" FOREIGN KEY ("packId") REFERENCES "Packs"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -22,7 +22,7 @@ import { UploadModal } from "@/components/ui/upload"
 import { useState } from "react"
 import { TrainModelInput } from "common/inferred"
 import axios from "axios"
-import { BACKEND_URL } from "../config"
+import { BACKEND_URL } from "../../config"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@clerk/nextjs"
 
@@ -53,7 +53,6 @@ export default function Train() {
         const response = await axios.post(`${BACKEND_URL}/ai/training`, input, {
             headers: {
                 Authorization
-                
                 : `Bearer ${token}`
             }
         });

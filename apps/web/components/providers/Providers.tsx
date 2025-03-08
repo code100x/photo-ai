@@ -2,15 +2,17 @@
 import { dark } from '@clerk/themes'
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "react-hot-toast";
+import { Toaster } from "@/components/ui/toaster";
+import axios from 'axios';
 
 interface ProvidersProps {
   children: React.ReactNode;
 }
 
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
 export function Providers({ children }: ProvidersProps) {
   return (
-    // dark mode
     <ClerkProvider appearance={{ layout: { logoPlacement: "inside" }, baseTheme: dark }}>
       <ThemeProvider
         attribute="class"
@@ -19,7 +21,7 @@ export function Providers({ children }: ProvidersProps) {
         disableTransitionOnChange
       >
         {children}
-        <Toaster position="bottom-right" />
+        <Toaster/>
       </ThemeProvider>
     </ClerkProvider>
   );

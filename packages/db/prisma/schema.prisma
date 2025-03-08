@@ -84,7 +84,9 @@ model PackPrompts {
   id        String    @id @default(uuid())
   prompt    String
   packId    String
-  pack      Packs    @relation(fields: [packId], references: [id])
+  pack      Packs    @relation(fields: [packId], references: [id] , onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Subscription {
