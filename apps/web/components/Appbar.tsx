@@ -98,7 +98,7 @@ export function Appbar() {
                     asChild
                   >
                     <SignInButton mode="modal">
-                      <span>Sign In</span>
+                      <span className="cursor-pointer">Sign In</span>
                     </SignInButton>
                   </Button>
                 </motion.div>
