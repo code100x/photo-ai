@@ -13,7 +13,7 @@ export function ThemeToggle() {
   useEffect(()=>{
     const isDark = theme === "dark";
     setChecked(isDark)
-  },[]);
+  },[theme]);
 
   return (
     <div className="flex items-center gap-2">
