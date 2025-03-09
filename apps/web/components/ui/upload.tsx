@@ -16,20 +16,52 @@ import { BACKEND_URL, CLOUDFLARE_URL } from "@/app/config";
 import { cn } from "@/lib/utils";
 
 export function UploadModal({
-  handleUpload,
-  uploadProgress,
-  isUploading,
+  onUploadDone,
 }: {
-  handleUpload: (files: File[]) => void;
-  uploadProgress: number;
-  isUploading: boolean;
+  onUploadDone: (zipUrl: string) => void;
 }) {
   const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(e.type === "dragenter" || e.type === "dragover");
   }, []);
+
+  const handleUpload = useCallback(async (files: File[]) => {
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const zip = new JSZip();
+      files.forEach((file) => {
+        zip.file(file.name, file);
+      });
+
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const formData = new FormData();
+      formData.append("file", zipBlob, "images.zip");
+
+      const response = await axios.post(`${BACKEND_URL}/upload`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        onUploadProgress: (progressEvent) => {
+          const progress = (progressEvent.loaded / progressEvent.total!) * 100;
+          setUploadProgress(progress);
+        },
+      });
+
+      onUploadDone(response.data.url);
+    } catch (error) {
+      console.error("Upload failed:", error);
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  }, [onUploadDone]);
 
   const handleDrop = useCallback(async (e: React.DragEvent) => {
     e.preventDefault();
@@ -38,7 +70,7 @@ export function UploadModal({
 
     const files = Array.from(e.dataTransfer.files);
     if (files.length) await handleUpload(files);
-  }, []);
+  }, [handleUpload]);
 
   return (
     <Card className="w-full rounded-none border-none mx-auto shadow-none">

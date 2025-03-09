@@ -276,9 +276,10 @@ export function Train() {
 
                 <div className="space-y-2">
                   <UploadModal
-                    handleUpload={handleUpload}
-                    isUploading={isUploading}
-                    uploadProgress={uploadProgress}
+                    onUploadDone={(zipUrl) => {
+                      // Handle the zip URL here
+                      console.log("Upload completed, zip URL:", zipUrl);
+                    }}
                   />
                   <AnimatePresence>
                     {uploadedFiles.length > 0 && (
