@@ -20,15 +20,16 @@ import {
 import { Switch } from "@/components/ui/switch"
 import { UploadModal } from "@/components/ui/upload"
 import { useState } from "react"
-import { TrainModelInput } from "common/inferred"
 import axios from "axios"
 import { BACKEND_URL } from "../config"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@clerk/nextjs"
 
 export default function Train() {
-    const { getToken } = useAuth();
+    const { getToken } = useAuth();
     const [zipUrl, setZipUrl] = useState("");
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [isUploading, setIsUploading] = useState(false);
     const [type, setType] = useState("Man")
     const [age, setAge] = useState<string>()
     const [ethinicity, setEthinicity] = useState<string>()
@@ -135,9 +136,30 @@ export default function Train() {
                             setBald(!bald)
                         }} />
                     </div>
-                    <UploadModal onUploadDone={(zipUrl) => {
-                        setZipUrl(zipUrl)
-                    }} />
+                    <UploadModal 
+                        handleUpload={async (files) => {
+                            if (!files.length) return;
+                            const file = files[0] as File;
+                            setIsUploading(true);
+                            try {
+                                const formData = new FormData();
+                                formData.append('file', file);
+                                const token = await getToken();
+                                const response = await axios.post(`${BACKEND_URL}/upload`, formData, {
+                                    headers: { Authorization: `Bearer ${token}` },
+                                    onUploadProgress: (p) => setUploadProgress(Math.round((p.loaded * 100) / (p.total ?? 100)))
+                                });
+                                setZipUrl(response.data.url);
+                            } catch (error) {
+                                console.error('Upload failed:', error);
+                            } finally {
+                                setIsUploading(false);
+                                setUploadProgress(0);
+                            }
+                        }}
+                        uploadProgress={uploadProgress}
+                        isUploading={isUploading}
+                    />
                 </div>
             </CardContent>
             <CardFooter className="flex justify-between">

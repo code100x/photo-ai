@@ -1,7 +1,5 @@
 "use client";
 
-import JSZip from "jszip";
-import axios from "axios";
 import { useState, useCallback } from "react";
 import {
   Card,
@@ -11,20 +9,39 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { BACKEND_URL, CLOUDFLARE_URL } from "@/app/config";
 import { cn } from "@/lib/utils";
+
+const ACCEPTED_FILE_TYPES = ["image/png", "image/jpeg", "image/gif"];
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 export function UploadModal({
   handleUpload,
   uploadProgress,
   isUploading,
-}: {
+}: Readonly<{
   handleUpload: (files: File[]) => void;
   uploadProgress: number;
   isUploading: boolean;
-}) {
+}>) {
   const [isDragging, setIsDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const validateFiles = (files: File[]): boolean => {
+    setError(null);
+    
+    for (const file of files) {
+      if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
+        setError("Please upload only PNG, JPG, or GIF files.");
+        return false;
+      }
+      if (file.size > MAX_FILE_SIZE) {
+        setError("Files must be smaller than 10MB.");
+        return false;
+      }
+    }
+    return true;
+  };
+
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -37,8 +54,25 @@ export function UploadModal({
     setIsDragging(false);
 
     const files = Array.from(e.dataTransfer.files);
-    if (files.length) await handleUpload(files);
-  }, []);
+    if (files.length && validateFiles(files)) {
+      try {
+        handleUpload(files);
+      } catch (_) {
+        setError("Failed to upload files. Please try again.");
+      }
+    }
+  }, [handleUpload]);
+
+  const handleFileSelect = useCallback(async (files: FileList) => {
+    const fileArray = Array.from(files);
+    if (fileArray.length && validateFiles(fileArray)) {
+      try {
+        handleUpload(fileArray);
+      } catch (_) {
+        setError("Failed to upload files. Please try again.");
+      }
+    }
+  }, [handleUpload]);
 
   return (
     <Card className="w-full rounded-none border-none mx-auto shadow-none">
@@ -47,11 +81,11 @@ export function UploadModal({
           Upload Modal Images
         </CardTitle>
         <CardDescription className="text-xs text-muted-foreground">
-          Supports multiple images upload
+          Supports multiple images upload (PNG, JPG, GIF up to 10MB)
         </CardDescription>
       </CardHeader>
       <CardContent className="pt-6 px-0">
-        <div
+        <section
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
@@ -63,12 +97,18 @@ export function UploadModal({
               : "border-muted-foreground hover:border-emerald-400",
             isUploading && "pointer-events-none opacity-80"
           )}
+          aria-label="File upload dropzone"
         >
-          <CloudUploadIcon className="w-16 h-16 text-neutral-400" />
+          <CloudUploadIcon className="w-16 h-16 text-neutral-400" aria-hidden="true" />
 
           {isUploading ? (
             <div className="w-full max-w-sm space-y-3 text-center">
-              <Progress value={uploadProgress} className="h-2 w-full" />
+              <progress 
+                value={uploadProgress} 
+                max={100}
+                className="h-2 w-full" 
+                aria-label="Upload progress"
+              />
               <p className="text-xs text-neutral-500">
                 {uploadProgress < 50 ? "Preparing files..." : "Uploading..."}
               </p>
@@ -84,29 +124,34 @@ export function UploadModal({
                 onClick={() => {
                   const input = document.createElement("input");
                   input.type = "file";
-                  input.accept = "image/*";
+                  input.accept = ACCEPTED_FILE_TYPES.join(",");
                   input.multiple = true;
-                  input.onchange = async () => {
-                    if (input.files?.length)
-                      await handleUpload(Array.from(input.files));
+                  input.setAttribute("aria-label", "Choose files to upload");
+                  input.onchange = () => {
+                    if (input.files?.length) handleFileSelect(input.files);
                   };
                   input.click();
                 }}
               >
                 Browse Files
               </Button>
+              {error && (
+                <p className="text-sm text-red-500" role="alert">
+                  {error}
+                </p>
+              )}
               <p className="text-xs text-neutral-500">
-                Supported formats: PNG, JPG, GIF
+                Maximum file size: 10MB
               </p>
             </div>
           )}
-        </div>
+        </section>
       </CardContent>
     </Card>
   );
 }
 
-function CloudUploadIcon(props: React.SVGProps<SVGSVGElement>) {
+function CloudUploadIcon(props: Readonly<React.SVGProps<SVGSVGElement>>) {
   return (
     <svg
       {...props}
@@ -117,6 +162,7 @@ function CloudUploadIcon(props: React.SVGProps<SVGSVGElement>) {
       stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
+      aria-hidden="true"
     >
       <path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2" />
       <path d="M12 12v9" />
