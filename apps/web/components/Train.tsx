@@ -48,10 +48,11 @@ interface UploadedFile {
 export function Train() {
   const { getToken } = useAuth();
   const [zipUrl, setZipUrl] = useState("");
+  const [zipKey, setZipKey] = useState("");
   const [type, setType] = useState("Man");
-  const [age, setAge] = useState<string>();
-  const [ethinicity, setEthinicity] = useState<string>();
-  const [eyeColor, setEyeColor] = useState<string>();
+  const [age, setAge] = useState<string>("25");
+  const [ethinicity, setEthinicity] = useState<string>("White");
+  const [eyeColor, setEyeColor] = useState<string>("Brown");
   const [bald, setBald] = useState(false);
   const [name, setName] = useState("");
   const [modelTraining, setModelTraining] = useState(false);
@@ -61,16 +62,78 @@ export function Train() {
   const [previewFiles, setPreviewFiles] = useState<File[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [modelId, setModelId] = useState<string | null>(null);
+  const [trainingStatus, setTrainingStatus] = useState<string | null>(null);
+
+  // Check training status periodically if we have a modelId
+  useEffect(() => {
+    if (!modelId) return;
+
+    const checkStatus = async () => {
+      try {
+        const token = await getToken();
+        const response = await axios.get(
+          `${BACKEND_URL}/model/status/${modelId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (response.data.success) {
+          setTrainingStatus(response.data.model.status);
+
+          // If training is complete, stop checking
+          if (
+            response.data.model.status === "Generated" ||
+            response.data.model.status === "Failed"
+          ) {
+            if (response.data.model.status === "Generated") {
+              toast.success("Model training completed successfully!");
+              router.refresh();
+            } else {
+              toast.error("Model training failed. Please try again.");
+            }
+            setModelId(null);
+            setModelTraining(false);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking model status:", error);
+      }
+    };
+
+    checkStatus();
+
+    const interval = setInterval(checkStatus, 10000);
+    return () => clearInterval(interval);
+  }, [modelId, getToken, router]);
 
   async function trainModal() {
     if (credits <= 0) {
+      toast.error("You don't have enough credits");
       router.push("/pricing");
       return;
     }
+
+    if (!zipUrl) {
+      toast.error("Please upload images first");
+      return;
+    }
+
+    if (!name) {
+      toast.error("Please enter a model name");
+      return;
+    }
+
+    if (!type || !age || !ethinicity || !eyeColor) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
     const input = {
       zipUrl,
       type,
-      age: Number.parseInt(age ?? "0"),
+      age: Number.parseInt(age ?? "25"),
       ethinicity,
       eyeColor,
       bald,
@@ -80,17 +143,27 @@ export function Train() {
     try {
       const token = await getToken();
       setModelTraining(true);
-      await axios.post(`${BACKEND_URL}/ai/training`, input, {
+
+      const response = await axios.post(`${BACKEND_URL}/ai/training`, input, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      toast.success(
-        "Model training started! This will take approximately 20 minutes."
-      );
+
+      if (response.data.modelId) {
+        setModelId(response.data.modelId);
+        toast.success(
+          "Model training started! This will take approximately 20 minutes."
+        );
+      } else {
+        toast.error("Failed to start model training");
+        setModelTraining(false);
+      }
     } catch (error) {
-      toast.error("Failed to start model training");
-    } finally {
+      console.error("Training error:", error);
+      toast.error(
+        (error as any).response?.data?.message ||
+          "Failed to start model training"
+      );
       setModelTraining(false);
-      setPreviewFiles([]);
     }
   }
 
@@ -99,22 +172,29 @@ export function Train() {
       const newFiles = prev.filter((_, index) => index !== indexToRemove);
       if (newFiles.length === 0) {
         setZipUrl("");
+        setZipKey("");
       }
       return newFiles;
     });
   };
 
   const handleUpload = async (files: File[]) => {
+    if (files.length > 50) {
+      toast.error("Maximum 50 images allowed");
+      return;
+    }
+
     setIsUploading(true);
     setUploadProgress(0);
     setPreviewFiles(files);
 
     try {
-      const zip = new JSZip();
       const res = await axios.get(`${BACKEND_URL}/pre-signed-url`);
       const { url, key } = res.data;
 
+      const zip = new JSZip();
       const fileNames: string[] = [];
+
       for (const file of files) {
         zip.file(file.name, await file.arrayBuffer());
         fileNames.push(file.name);
@@ -122,7 +202,11 @@ export function Train() {
       }
 
       const content = await zip.generateAsync({ type: "blob" });
+
       await axios.put(url, content, {
+        headers: {
+          "Content-Type": "application/zip",
+        },
         onUploadProgress: (progressEvent) => {
           setUploadProgress(
             50 + Math.round((progressEvent.loaded * 50) / progressEvent.total!)
@@ -130,8 +214,10 @@ export function Train() {
         },
       });
 
-      // onUploadDone(`${CLOUDFLARE_URL}/${key}`, fileNames);
-      setZipUrl(zipUrl);
+      const fullZipUrl = `${CLOUDFLARE_URL}/${key}`;
+      setZipUrl(fullZipUrl);
+      setZipKey(key);
+
       setUploadedFiles((prev) => [
         ...prev,
         ...fileNames.map((name) => ({
@@ -140,13 +226,18 @@ export function Train() {
           timestamp: new Date(),
         })),
       ]);
+
+      toast.success("Images uploaded successfully!");
     } catch (error) {
       console.error("Upload failed:", error);
+      toast.error("Failed to upload images. Please try again.");
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
     }
   };
+
+  const isFormValid = name && zipUrl && type && age && ethinicity && eyeColor;
 
   return (
     <motion.div
@@ -158,7 +249,9 @@ export function Train() {
       <div className="w-full">
         <div className="flex items-center gap-2 mb-4">
           <div>
-            <h1 className="md:text-2xl text-xl font-semibold">Train New Model</h1>
+            <h1 className="md:text-2xl text-xl font-semibold">
+              Train New Model
+            </h1>
             <p className="md:text-sm text-xs text-muted-foreground">
               Create a custom AI model with your photos
             </p>
@@ -299,6 +392,7 @@ export function Train() {
                               onClick={() => {
                                 setUploadedFiles([]);
                                 setZipUrl("");
+                                setZipKey("");
                               }}
                               className="text-xs text-red-500 cursor-pointer bg-red-500/20 border border-red-500/60 px-3 py-1 rounded-lg font-semibold hover:text-red-600 transition-colors"
                             >
@@ -371,19 +465,15 @@ export function Train() {
             <CardFooter className="flex justify-end px-0">
               <Button
                 onClick={trainModal}
-                disabled={
-                  modelTraining ||
-                  !name ||
-                  !zipUrl ||
-                  !type ||
-                  !age ||
-                  !ethinicity ||
-                  !eyeColor
-                }
+                disabled={modelTraining || !isFormValid}
                 className="gap-2"
               >
                 {modelTraining ? (
-                  <>Training...</>
+                  <>
+                    {trainingStatus
+                      ? `Training: ${trainingStatus}...`
+                      : "Training..."}
+                  </>
                 ) : (
                   <>Train Model (20 credits)</>
                 )}
@@ -391,7 +481,6 @@ export function Train() {
             </CardFooter>
           </Card>
 
-          {/* Right Column - Image Preview */}
           <Card className="h-full border-l-0 md:border-l border-r-0 border-t-0 border-b-0 shadow-none rounded-none">
             <CardHeader>
               <CardTitle>Image Preview</CardTitle>
@@ -406,7 +495,7 @@ export function Train() {
                       return (
                         <CarouselItem key={index}>
                           <div className="p-1">
-                            <div className="flex flex-col items-center  p-2">
+                            <div className="flex flex-col items-center p-2">
                               <div className="relative aspect-square w-full md:max-w-[400px] max-w-[200px] overflow-hidden rounded-xl">
                                 <Image
                                   src={imageUrl}

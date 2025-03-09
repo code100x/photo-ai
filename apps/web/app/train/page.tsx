@@ -135,9 +135,9 @@ export default function Train() {
                             setBald(!bald)
                         }} />
                     </div>
-                    <UploadModal onUploadDone={(zipUrl) => {
-                        setZipUrl(zipUrl)
-                    }} />
+                    <UploadModal handleUpload={(files) => {
+                        setZipUrl(files[0]?.name ?? "")
+                    }} uploadProgress={0} isUploading={false} />
                 </div>
             </CardContent>
             <CardFooter className="flex justify-between">
