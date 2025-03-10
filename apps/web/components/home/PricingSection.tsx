@@ -39,6 +39,7 @@ export function PricingSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ delay: index * 0.2, duration: 0.5 }}
+            whileHover={{ y: -10 }} // Add upward movement on hover
             className={`relative group rounded-2xl ${
               plan.highlighted
                 ? "bg-gradient-to-b from-purple-600 to-pink-600 dark:from-purple-600 dark:to-pink-600"
@@ -64,6 +65,10 @@ export function PricingSection() {
                   ))}
                 </ul>
                 <Button
+                  className={`w-full cursor-pointer ${
+                    plan.highlighted
+                      ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                      : "bg-white/90 hover:bg-white/70"
                   className={`w-full text-primary ${
                     plan.highlighted
                       ? "bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
