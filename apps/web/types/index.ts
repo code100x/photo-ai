@@ -44,3 +44,18 @@ export interface Transaction {
   createdAt: string;
   updatedAt: string;
 }
+
+export type StatsData = {
+  userCount: number;
+  trainedModelCount: number;
+  imagesCount: number;
+  packCount: number;
+  totalRevenue: number;
+  charts: {
+    dailyUsers: { date: string; count: number }[];
+    dailyTrainedModels: { date: string; count: number }[];
+    dailyGeneratedImages: { date: string; count: number }[];
+    dailyRevenue: { date: string; amount: number }[];
+  };
+};
+
