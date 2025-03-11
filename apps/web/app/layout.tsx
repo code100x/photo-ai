@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
-import { Appbar } from "@/components/Appbar";
+import { Inter, Instrument_Serif } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
-import { Footer } from "@/components/Footer";
+import { meta } from "@/lib/constants";
 import Script from "next/script";
+import { cn } from "@/lib/utils";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
+import "./globals.css";
+
+const inter = Inter({
+   variable: "--font-inter",
+   subsets: ["latin"],
+   weight: "300" 
 });
 
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
+const instrumentSerif = Instrument_Serif({
+   variable: "--font-instrument-serif",
+   subsets: ["latin"],
+   weight: "400" 
 });
 
 export const metadata: Metadata = {
-  title: "100xPhoto - AI-Powered Photo Enhancement",
-  description:
-    "Transform your photos with AI-powered enhancement and editing tools.",
+  title: meta.title,
+  description: meta.description
 };
 
 export default function RootLayout({
@@ -36,15 +38,11 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background font-sans antialiased`}
-      >
+      <body className={cn("antialiased", inter.variable, instrumentSerif.variable)}>
         <Providers>
-          <div className="relative flex min-h-screen flex-col">
-            <Appbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
-          </div>
+           <main className="relative">
+	     {children}
+	   </main>
         </Providers>
       </body>
     </html>

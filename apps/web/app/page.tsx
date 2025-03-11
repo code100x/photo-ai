@@ -1,5 +1,5 @@
 "use client";
-import { Hero } from "@/components/home/Hero";
+import { Landing } from "@/components/landing/Landing";
 import { useAuth } from "@/hooks/useAuth";
 import { redirect } from "next/navigation";
 
@@ -9,9 +9,5 @@ export default function Home() {
   if (user) {
     redirect("/dashboard");
   }
-  return (
-    <div>
-      <Hero />
-    </div>
-  );
+  return <Landing />;
 }

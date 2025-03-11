@@ -4,6 +4,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+   --font-*: initial;
+   --font-sans: "Inter";
+   --font-serif: "Instrument Serif";
+}
+
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);
@@ -170,6 +176,12 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .z-index{
+    @apply z-0 group-hover:z-10
   }
 }
 

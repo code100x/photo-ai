@@ -19,8 +19,8 @@ export function PacksClient({ packs }: { packs: TPack[] }) {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-background/50 mx-auto">
-      <div className="container mx-auto md:px-8 pt-4">
+     <div className="h-[calc(100vh-200px)] overflow-y-auto overflow-x-hidden">
+      <div>
         {/* Filters Section */}
         <motion.div 
           className="rounded-lg mb-8"
@@ -33,26 +33,25 @@ export function PacksClient({ packs }: { packs: TPack[] }) {
               <SelectModel
                 selectedModel={selectedModelId}
                 setSelectedModel={setSelectedModelId}
+		height={100}
+		heading={true}
               />
             </div>
           </div>
         </motion.div>
 
-        <div className="md:space-y-1">
-          <h2 className="md:text-2xl text-xl font-semibold tracking-tight">
+        <div className="space-y-1">
+          <h2 className="text-lg font-bold">
             Select Pack
           </h2>
-          <p className="text-sm text-muted-foreground">
-            Chose a pack to generate images with
-          </p>
         </div>
         <motion.div 
           className={cn(
-            "grid gap-6 pt-4",
+            "grid gap-2 pt-4",
             "grid-cols-1",
             "sm:grid-cols-2",
             "lg:grid-cols-3",
-            "xl:grid-cols-3"
+            "xl:grid-cols-6"
           )}
           initial="hidden"
           animate="visible"

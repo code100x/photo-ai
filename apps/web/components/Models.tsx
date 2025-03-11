@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
@@ -20,12 +19,16 @@ interface TModel {
 export function SelectModel({
   setSelectedModel,
   selectedModel,
+  height,
+  heading = true
 }: {
+  height: number,
+  heading?: boolean;
   setSelectedModel: (model: string) => void;
   selectedModel?: string;
 }) {
   const { getToken } = useAuth();
-  const [modelLoading, setModalLoading] = useState(false);
+  const [modelLoading, setModalLoading] = useState(true);
   const [models, setModels] = useState<TModel[]>([]);
 
   useEffect(() => {
@@ -59,27 +62,23 @@ export function SelectModel({
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="md:space-y-1">
-          <h2 className="md:text-2xl text-xl font-semibold tracking-tight">
-            Select Model
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Choose an AI model to generate your images
-          </p>
-        </div>
+      {heading && <h2 className="text-lg font-bold">
+         Select Model
+        </h2>
+      }
+      {models.length > 0 && <div className="flex items-center justify-between">
         {models.find((x) => x.trainingStatus !== "Generated") && (
           <Badge variant="secondary" className="animate-pulse">
             <Loader2 className="w-3 h-3 mr-1 animate-spin" />
             Training in progress
           </Badge>
         )}
-      </div>
+      </div>}
 
       {modelLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[1, 2, 3].map((_, i) => (
-            <Card key={i} className="h-[220px] animate-pulse bg-muted/50" />
+            <Card key={i} className="animate-pulse bg-muted/50" style={{ height }} />
           ))}
         </div>
       ) : (

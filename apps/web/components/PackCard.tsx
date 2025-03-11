@@ -83,8 +83,8 @@ export function PackCard(props: TPack & { selectedModelId: string }) {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger asChild>
-          <Card className="group h-full overflow-hidden border bg-card hover:shadow-xl hover:shadow-primary/20 transition-all duration-300">
+        <TooltipTrigger asChild className="p-2 space-y-4 border-none bg-zinc-400/20 dark:bg-white/5 backdrop-blur-md hover:bg-white/10 transition-all duration-300">
+          <Card className="group h-full border-none shadow-none">
             <CardHeader className="p-0">
               {images.length > 1 ? (
                 // Render Carousel if there are more than 2 images
@@ -127,7 +127,7 @@ export function PackCard(props: TPack & { selectedModelId: string }) {
               )}
             </CardHeader>
 
-            <CardContent className="p-4 space-y-2">
+            <CardContent className="p-0">
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <h3 className="font-semibold tracking-tight text-lg">
@@ -148,7 +148,7 @@ export function PackCard(props: TPack & { selectedModelId: string }) {
               </div>
 
               <p className="text-sm text-muted-foreground line-clamp-2">
-                {props.description}
+	        {props.description.length > 25 ? props.description.slice(0, 25) + "..." : props.description}
               </p>
 
               {props.createdAt && (
@@ -158,9 +158,9 @@ export function PackCard(props: TPack & { selectedModelId: string }) {
               )}
             </CardContent>
 
-            <CardFooter className="p-4 pt-0">
+            <CardFooter className="p-0">
               <Button
-                className="w-full gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 cursor-pointer"
+                className="w-full gap-2 bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 rounded-lg hover:to-primary/70 cursor-pointer"
                 onClick={handleGenerate}
               >
                 Generate
