@@ -196,3 +196,36 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+
+
+.pink-gradient-transition{
+  position: relative;
+  background-image: linear-gradient(
+    to right,
+    oklch(0.627 0.265 303.9),
+    oklch(0.656 0.241 354.308)
+  );
+  z-index: 1;
+}
+
+.pink-gradient-transition::before {
+  position: absolute;
+  content: '';
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: linear-gradient(
+    to right,
+    oklch(0.558 0.288 302.321),
+    oklch(0.592 0.249 0.584)
+  );
+  border-radius: inherit;
+  z-index: -1;
+  transition: opacity 0.3s linear;
+  opacity: 0;
+}
+
+.pink-gradient-transition:hover::before {
+  opacity: 1;
+}
