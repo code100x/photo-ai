@@ -22,7 +22,7 @@ import { UploadModal } from "@/components/ui/upload"
 import { useState } from "react"
 import { TrainModelInput } from "common/inferred"
 import axios from "axios"
-import { BACKEND_URL } from "../config"
+import { BACKEND_URL } from "@/app/config"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@clerk/nextjs"
 

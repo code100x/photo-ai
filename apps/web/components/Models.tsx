@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
@@ -20,7 +19,11 @@ interface TModel {
 export function SelectModel({
   setSelectedModel,
   selectedModel,
+  height,
+  heading = true
 }: {
+  height: number,
+  heading?: boolean;
   setSelectedModel: (model: string) => void;
   selectedModel?: string;
 }) {
@@ -58,33 +61,29 @@ export function SelectModel({
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="md:space-y-1">
-          <h2 className="md:text-2xl text-xl font-semibold tracking-tight">
-            Select Model
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            Choose an AI model to generate your images
-          </p>
-        </div>
+    <div>
+      {heading && <h2 className="text-lg pb-4 font-bold">
+         Select Model
+        </h2>
+      }
+      {models.length > 0 && <div className="flex pt-4 items-center justify-between">
         {models.find((x) => x.trainingStatus !== "Generated") && (
           <Badge variant="secondary" className="animate-pulse">
             <Loader2 className="w-3 h-3 mr-1 animate-spin" />
             Training in progress
           </Badge>
         )}
-      </div>
+      </div>}
 
       {modelLoading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 md:grid-cols-3 pt-4 gap-4">
           {[1, 2, 3].map((_, i) => (
-            <Card key={i} className="h-[220px] animate-pulse bg-muted/50" />
+            <Card key={i} className="animate-pulse bg-muted/50" style={{ height }} />
           ))}
         </div>
       ) : (
         <motion.div
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4"
+          className="grid grid-cols-3 md:grid-cols-3 gap-4"
           variants={container}
           initial="hidden"
           animate="show"
@@ -126,11 +125,11 @@ export function SelectModel({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center p-12 rounded-lg border border-dashed"
+          className="flex flex-col items-center justify-center p-4 rounded-lg border border-dashed"
         >
-          <Sparkles className="h-12 w-12 text-muted-foreground/50" />
-          <h3 className="mt-4 text-lg font-medium">No models available</h3>
-          <p className="mt-2 text-sm text-muted-foreground text-center">
+          <Sparkles className="h-8 w-8 text-muted-foreground/50" />
+          <h3 className="mt-4 font-medium">No models available</h3>
+          <p className="mt-2 text-xs text-muted-foreground text-center">
             Start by training a new model
           </p>
         </motion.div>

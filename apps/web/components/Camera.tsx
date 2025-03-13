@@ -97,30 +97,29 @@ export function Camera() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Your Gallery</h2>
+      <div className="flex items-center justify-end">
         <span className="text-xs select-none bg-secondary/40 font-semibold border border-secondary text-muted-foreground px-2 py-1 rounded-full">
           {images.length} images
         </span>
       </div>
 
       <motion.div
-        className="columns-1 md:columns-3 lg:columns-3 gap-4"
+        className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 space-y-2 gap-2"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         {imagesLoading
-          ? [...Array(8)].map((_, i) => (
+          ? [...Array(4)].map((_, i) => (
               <motion.div
                 key={i}
-                className="bg-neutral-300 h-48 rounded-lg animate-pulse"
+                className="bg-neutral-300 dark:bg-zinc-800 h-48 rounded-lg animate-pulse"
               />
             ))
           : images.map((image, index) => (
               <div
                 key={image.id +index}
-                className="cursor-pointer transition-transform mb-4 hover:scale-[1.02]"
+                className="reak-inside-avoid bg-zinc-400/20 dark:bg-white/5 backdrop-blur-md rounded-md p-2 hover:bg-white/10 duration-300 transition-transform mb-4 hover:scale-[1.02]"
                 onClick={() => handleImageClick(image, index)}
               >
                 <ImageCard
