@@ -20,10 +20,10 @@ export function PacksClient({ packs }: { packs: TPack[] }) {
 
   return (
      <div className="h-[calc(100vh-200px)] overflow-y-auto overflow-x-hidden">
-      <div>
+      <div className="space-y-4">
         {/* Filters Section */}
         <motion.div 
-          className="rounded-lg mb-8"
+          className="rounded-lg"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -47,7 +47,7 @@ export function PacksClient({ packs }: { packs: TPack[] }) {
         </div>
         <motion.div 
           className={cn(
-            "grid gap-2 pt-4",
+            "grid gap-2",
             "grid-cols-1",
             "sm:grid-cols-2",
             "lg:grid-cols-3",

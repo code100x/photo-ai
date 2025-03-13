@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ImageIcon } from "lucide-react";
+import { X, Brain, ImageIcon } from "lucide-react";
 import { useCredits } from "@/hooks/use-credits";
 import Image from "next/image";
 import {
@@ -161,7 +161,7 @@ export function Train() {
       console.error("Training error:", error);
       toast.error(
         (error as any).response?.data?.message ||
-          "Failed to start model training"
+        "Failed to start model training"
       );
       setModelTraining(false);
     }
@@ -241,40 +241,42 @@ export function Train() {
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center pt-4 md:px-4"
+      className="flex flex-col md:h-full items-center justify-center"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full">
-        <div className="flex items-center gap-2 mb-4">
-          <div>
-            <h1 className="md:text-2xl text-xl font-semibold">
-              Train New Model
-            </h1>
-            <p className="md:text-sm text-xs text-muted-foreground">
-              Create a custom AI model with your photos
-            </p>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="border-0 outline-6 outline-zinc-400/10 dark:outline-zinc-600/10 backdrop-blur-xl">
+          <CardHeader>
+            <div className="flex gap-2">
+              <Brain className="h-6 w-6 text-primary" />
+              <div>
+                <CardTitle>Train New Model</CardTitle>
+                <CardDescription>
+                  Create a custom AI model with your photos
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="h-full border-none shadow-none ">
-            <CardContent className="p-0">
-              <motion.div
-                className="grid gap-6"
-                initial="hidden"
-                animate="visible"
-                variants={{
-                  hidden: { opacity: 0 },
-                  visible: {
-                    opacity: 1,
-                    transition: {
-                      staggerChildren: 0.1,
-                    },
+          <CardContent>
+            <motion.div
+              className="grid gap-6"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
                   },
-                }}
-              >
+                },
+              }}
+            >
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Model Name</Label>
                   <Input
@@ -284,253 +286,252 @@ export function Train() {
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
-
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="space-y-2 col-span-2">
-                    <Label>Type</Label>
-                    <Select value={type} onValueChange={setType}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Man">Man</SelectItem>
-                        <SelectItem value="Woman">Woman</SelectItem>
-                        <SelectItem value="Others">Others</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="age">Age</Label>
-                    <Input
-                      id="age"
-                      type="number"
-                      placeholder="Enter age"
-                      value={age}
-                      onChange={(e) => setAge(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Bald</Label>
-                    <div className="flex items-center space-x-2 pt-2">
-                      <Switch
-                        className="data-[state=checked]:bg-green-400 data-[state=unchecked]:bg-input"
-                        checked={bald}
-                        onCheckedChange={setBald}
-                      />
-                      <span className="text-sm text-muted-foreground">
-                        {bald ? "Yes" : "No"}
-                      </span>
-                    </div>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="age">Age</Label>
+                  <Input
+                    id="age"
+                    type="number"
+                    placeholder="Enter age"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                  />
                 </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Ethnicity</Label>
-                    <Select value={ethinicity} onValueChange={setEthinicity}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select ethnicity" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="White">White</SelectItem>
-                        <SelectItem value="Black">Black</SelectItem>
-                        <SelectItem value="Asian_American">
-                          Asian American
-                        </SelectItem>
-                        <SelectItem value="East_Asian">East Asian</SelectItem>
-                        <SelectItem value="South_East_Asian">
-                          South East Asian
-                        </SelectItem>
-                        <SelectItem value="South_Asian">South Asian</SelectItem>
-                        <SelectItem value="Middle_Eastern">
-                          Middle Eastern
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Eye Color</Label>
-                    <Select value={eyeColor} onValueChange={setEyeColor}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select eye color" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Brown">Brown</SelectItem>
-                        <SelectItem value="Blue">Blue</SelectItem>
-                        <SelectItem value="Hazel">Hazel</SelectItem>
-                        <SelectItem value="Gray">Gray</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <div className="grid grid-cols-4 gap-4">
+                <div className="space-y-2 col-span-2">
+                  <Label>Type</Label>
+                  <Select value={type} onValueChange={setType}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Man">Man</SelectItem>
+                      <SelectItem value="Woman">Woman</SelectItem>
+                      <SelectItem value="Others">Others</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <UploadModal
-                    handleUpload={handleUpload}
-                    isUploading={isUploading}
-                    uploadProgress={uploadProgress}
-                  />
-                  <AnimatePresence>
-                    {uploadedFiles.length > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="my-4 space-y-2"
-                      >
-                        <div className="flex items-center justify-between">
-                          <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
-                            Uploaded Files ({uploadedFiles.length})
-                          </p>
-                          {uploadedFiles.length > 1 && (
-                            <button
-                              onClick={() => {
-                                setUploadedFiles([]);
-                                setZipUrl("");
-                                setZipKey("");
-                              }}
-                              className="text-xs text-red-500 cursor-pointer bg-red-500/20 border border-red-500/60 px-3 py-1 rounded-lg font-semibold hover:text-red-600 transition-colors"
-                            >
-                              Remove all
-                            </button>
-                          )}
-                        </div>
-                        <div className="max-h-32 overflow-y-auto space-y-1 scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-neutral-800">
-                          <AnimatePresence>
-                            {uploadedFiles.map((file, index) => (
-                              <motion.div
-                                key={`${file.name}-${index}`}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                exit={{ opacity: 0, x: 20 }}
-                                transition={{ duration: 0.2 }}
-                                className="flex items-center justify-between text-sm p-2 rounded-md 
+                  <Label>Bald</Label>
+                  <div className="flex items-center space-x-2 pt-2">
+                    <Switch
+                      className="data-[state=checked]:bg-green-400 data-[state=unchecked]:bg-input"
+                      checked={bald}
+                      onCheckedChange={setBald}
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      {bald ? "Yes" : "No"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Ethnicity</Label>
+                  <Select value={ethinicity} onValueChange={setEthinicity}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select ethnicity" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="White">White</SelectItem>
+                      <SelectItem value="Black">Black</SelectItem>
+                      <SelectItem value="Asian_American">
+                        Asian American
+                      </SelectItem>
+                      <SelectItem value="East_Asian">East Asian</SelectItem>
+                      <SelectItem value="South_East_Asian">
+                        South East Asian
+                      </SelectItem>
+                      <SelectItem value="South_Asian">South Asian</SelectItem>
+                      <SelectItem value="Middle_Eastern">
+                        Middle Eastern
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Eye Color</Label>
+                  <Select value={eyeColor} onValueChange={setEyeColor}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select eye color" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Brown">Brown</SelectItem>
+                      <SelectItem value="Blue">Blue</SelectItem>
+                      <SelectItem value="Hazel">Hazel</SelectItem>
+                      <SelectItem value="Gray">Gray</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <UploadModal
+                  handleUpload={handleUpload}
+                  isUploading={isUploading}
+                  uploadProgress={uploadProgress}
+                />
+                <AnimatePresence>
+                  {uploadedFiles.length > 0 && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="my-4 space-y-2"
+                    >
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
+                          Uploaded Files ({uploadedFiles.length})
+                        </p>
+                        {uploadedFiles.length > 1 && (
+                          <button
+                            onClick={() => {
+                              setUploadedFiles([]);
+                              setZipUrl("");
+                              setZipKey("");
+                            }}
+                            className="text-xs text-red-500 cursor-pointer bg-red-500/20 border border-red-500/60 px-3 py-1 rounded-lg font-semibold hover:text-red-600 transition-colors"
+                          >
+                            Remove all
+                          </button>
+                        )}
+                      </div>
+                      <div className="max-h-32 overflow-y-auto space-y-1 scrollbar-thin scrollbar-thumb-neutral-200 dark:scrollbar-thumb-neutral-800">
+                        <AnimatePresence>
+                          {uploadedFiles.map((file, index) => (
+                            <motion.div
+                              key={`${file.name}-${index}`}
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: 20 }}
+                              transition={{ duration: 0.2 }}
+                              className="flex items-center justify-between text-sm p-2 rounded-md 
                                            bg-neutral-50 dark:bg-neutral-900 group hover:bg-neutral-100 
                                            dark:hover:bg-neutral-800 transition-colors"
-                              >
-                                <div className="flex items-center space-x-2">
-                                  <motion.svg
-                                    className="w-4 h-4 text-green-500 flex-shrink-0"
-                                    fill="none"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                    initial={{ scale: 0 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ delay: 0.2 }}
-                                  >
-                                    <path d="M5 13l4 4L19 7" />
-                                  </motion.svg>
-                                  <span
-                                    className="truncate max-w-[200px]"
-                                    title={file.name}
-                                  >
-                                    {file.name}
-                                  </span>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <span className="text-xs text-neutral-500">
-                                    {new Date(
-                                      file.timestamp
-                                    ).toLocaleTimeString()}
-                                  </span>
-                                  <button
-                                    onClick={() => handleRemoveFile(index)}
-                                    className="p-1 rounded-full hover:bg-neutral-200 cursor-pointer dark:hover:bg-neutral-700 
+                            >
+                              <div className="flex items-center space-x-2">
+                                <motion.svg
+                                  className="w-4 h-4 text-green-500 flex-shrink-0"
+                                  fill="none"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  transition={{ delay: 0.2 }}
+                                >
+                                  <path d="M5 13l4 4L19 7" />
+                                </motion.svg>
+                                <span
+                                  className="truncate max-w-[200px]"
+                                  title={file.name}
+                                >
+                                  {file.name}
+                                </span>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <span className="text-xs text-neutral-500">
+                                  {new Date(
+                                    file.timestamp
+                                  ).toLocaleTimeString()}
+                                </span>
+                                <button
+                                  onClick={() => handleRemoveFile(index)}
+                                  className="p-1 rounded-full hover:bg-neutral-200 cursor-pointer dark:hover:bg-neutral-700 
                                                text-neutral-400 hover:text-red-500 transition-all
                                                opacity-0 group-hover:opacity-100 focus:opacity-100
                                                focus:outline-none focus:ring-2 focus:ring-red-500/20"
-                                    title="Remove file"
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </button>
-                                </div>
-                              </motion.div>
-                            ))}
-                          </AnimatePresence>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-            </CardContent>
-            <CardFooter className="flex justify-end px-0">
-              <Button
-                onClick={trainModal}
-                disabled={modelTraining || !isFormValid}
-                className="gap-2"
-              >
-                {modelTraining ? (
-                  <>
-                    {trainingStatus
-                      ? `Training: ${trainingStatus}...`
-                      : "Training..."}
-                  </>
-                ) : (
-                  <>Train Model (20 credits)</>
-                )}
-              </Button>
-            </CardFooter>
-          </Card>
-
-          <Card className="h-full border-l-0 md:border-l border-r-0 border-t-0 border-b-0 shadow-none rounded-none">
-            <CardHeader>
-              <CardTitle>Image Preview</CardTitle>
-              <CardDescription>Preview of your uploaded images</CardDescription>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center w-full h-full">
-              {previewFiles.length > 0 ? (
-                <Carousel className="w-full md:max-w-md max-w-xs">
-                  <CarouselContent>
-                    {previewFiles.map((file, index) => {
-                      const imageUrl = URL.createObjectURL(file);
-                      return (
-                        <CarouselItem key={index}>
-                          <div className="p-1">
-                            <div className="flex flex-col items-center p-2">
-                              <div className="relative aspect-square w-full md:max-w-[400px] max-w-[200px] overflow-hidden rounded-xl">
-                                <Image
-                                  src={imageUrl}
-                                  alt={file.name}
-                                  fill
-                                  className="object-cover"
-                                  onLoad={() => URL.revokeObjectURL(imageUrl)}
-                                />
+                                  title="Remove file"
+                                >
+                                  <X className="h-4 w-4" />
+                                </button>
                               </div>
-                              <p className="mt-2 text-sm font-medium text-center truncate max-w-[250px]">
-                                {file.name}
-                              </p>
-                            </div>
-                          </div>
-                        </CarouselItem>
-                      );
-                    })}
-                  </CarouselContent>
-                  <CarouselPrevious className="left-2" />
-                  <CarouselNext className="right-2" />
-                </Carousel>
+                            </motion.div>
+                          ))}
+                        </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.div>
+          </CardContent>
+          <CardFooter className="flex justify-end">
+            <Button
+              onClick={trainModal}
+              disabled={modelTraining || !isFormValid}
+              className="gap-2"
+            >
+              {modelTraining ? (
+                <>
+                  {trainingStatus
+                    ? `Training: ${trainingStatus}...`
+                    : "Training..."}
+                </>
               ) : (
-                <div className="flex flex-col items-center justify-center p-6 text-center">
-                  <div className="flex h-40 w-40 items-center justify-center rounded-full bg-muted mb-4">
-                    <ImageIcon className="h-20 w-20 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-lg font-medium">No images uploaded</h3>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Upload images using the form on the left to see previews
-                    here
-                  </p>
-                </div>
+                <>Train Model (20 credits)</>
               )}
-            </CardContent>
-          </Card>
-        </div>
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <Card className="h-full shadow-none rounded-xl border-0 outline-6 outline-zinc-400/10 dark:outline-zinc-600/10 backdrop-blur-xl">
+          <CardHeader>
+            <CardTitle>Image Preview</CardTitle>
+            <CardDescription>Preview of your uploaded images</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center w-full">
+            {previewFiles.length > 0 ? (
+              <Carousel className="w-full md:max-w-md max-w-xs">
+                <CarouselContent>
+                  {previewFiles.map((file, index) => {
+                    const imageUrl = URL.createObjectURL(file);
+                    return (
+                      <CarouselItem key={index}>
+                        <div className="p-1">
+                          <div className="flex flex-col items-center p-2">
+                            <div className="relative aspect-square w-full md:max-w-[400px] max-w-[200px] overflow-hidden rounded-xl">
+                              <Image
+                                src={imageUrl}
+                                alt={file.name}
+                                fill
+                                className="object-cover"
+                                onLoad={() => URL.revokeObjectURL(imageUrl)}
+                              />
+                            </div>
+                            <p className="mt-2 text-sm font-medium text-center truncate max-w-[250px]">
+                              {file.name}
+                            </p>
+                          </div>
+                        </div>
+                      </CarouselItem>
+                    );
+                  })}
+                </CarouselContent>
+                <CarouselPrevious className="left-2" />
+                <CarouselNext className="right-2" />
+              </Carousel>
+            ) : (
+              <div className="flex flex-col items-center justify-center p-6 text-center">
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted mb-4">
+                  <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <h3 className="font-medium">No images uploaded</h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Upload images using the form on the left to see previews
+                  here
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </motion.div>
   );

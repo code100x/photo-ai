@@ -1,19 +1,14 @@
-"use client";
-
-import JSZip from "jszip";
-import axios from "axios";
 import { useState, useCallback } from "react";
 import {
   Card,
   CardHeader,
   CardTitle,
-  CardDescription,
   CardContent,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { BACKEND_URL, CLOUDFLARE_URL } from "@/app/config";
 import { cn } from "@/lib/utils";
+import { ImagePlus } from 'lucide-react'
 
 export function UploadModal({
   handleUpload,
@@ -41,33 +36,28 @@ export function UploadModal({
   }, []);
 
   return (
-    <Card className="w-full rounded-none border-none mx-auto shadow-none">
-      <CardHeader className="border-b pb-4 px-0">
-        <CardTitle className="md:text-xl text-lg font-semibold text-emerald-500">
+    <Card className="w-full border-0 shadow-lg">
+      <CardHeader className="p-0 pb-4 text-sm">
+        <CardTitle>
           Upload Modal Images
         </CardTitle>
-        <CardDescription className="text-xs text-muted-foreground">
-          Supports multiple images upload
-        </CardDescription>
       </CardHeader>
-      <CardContent className="pt-6 px-0">
+      <CardContent className="p-4 bg-zinc-100/10 rounded-xl">
         <div
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
           className={cn(
-            "flex flex-col items-center justify-center border-2 border-dashed rounded-lg p-10 transition-all",
+            "flex flex-col items-center justify-center",
             isDragging
               ? "border-emerald-500 bg-emerald-100"
               : "border-muted-foreground hover:border-emerald-400",
             isUploading && "pointer-events-none opacity-80"
           )}
         >
-          <CloudUploadIcon className="w-16 h-16 text-neutral-400" />
-
           {isUploading ? (
-            <div className="w-full max-w-sm space-y-3 text-center">
+            <div className="w-full max-w-sm space-y-3">
               <Progress value={uploadProgress} className="h-2 w-full" />
               <p className="text-xs text-neutral-500">
                 {uploadProgress < 50 ? "Preparing files..." : "Uploading..."}
@@ -75,12 +65,10 @@ export function UploadModal({
             </div>
           ) : (
             <div className="text-center space-y-4">
-              <p className="text-neutral-500">
-                <span className="font-medium">Drag and drop files here</span> or
-              </p>
               <Button
                 variant="outline"
-                size="lg"
+                size="icon"
+                className="relative group/button dark:bg-white p-4 h-12 w-12 [&_svg]:size-6 rounded-xl"
                 onClick={() => {
                   const input = document.createElement("input");
                   input.type = "file";
@@ -93,34 +81,18 @@ export function UploadModal({
                   input.click();
                 }}
               >
-                Browse Files
+                <ImagePlus className="text-gray-500/90" />
               </Button>
-              <p className="text-xs text-neutral-500">
-                Supported formats: PNG, JPG, GIF
+              <p className="text-zinc-600 dark:text-zinc-200">
+                <span className="">Drop your files here</span> or
+              </p>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                <span className="">Click to browse</span> / PNG, JPG, GIF
               </p>
             </div>
           )}
         </div>
       </CardContent>
     </Card>
-  );
-}
-
-function CloudUploadIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth={2}
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M4 14.9A7 7 0 1 1 15.7 8h1.8a4.5 4.5 0 0 1 2.5 8.2" />
-      <path d="M12 12v9" />
-      <path d="m16 16-4-4-4 4" />
-    </svg>
   );
 }

@@ -101,7 +101,7 @@ export function PackCard(props: TPack & { selectedModelId: string }) {
                             src={imageUrl!}
                             alt={`${props.name} preview ${index + 1}`}
                             fill
-                            className="object-cover"
+                            className="object-cover rounded-md"
                           />
                         </div>
                       </CarouselItem>

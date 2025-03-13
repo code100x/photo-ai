@@ -55,7 +55,7 @@ export function GenerateImage() {
 
   return (
     <motion.div
-      className="flex flex-col justify-center h-full  max-w-2xl mx-auto space-y-6"
+      className="flex flex-col justify-center h-full max-w-2xl mx-auto space-y-6"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}

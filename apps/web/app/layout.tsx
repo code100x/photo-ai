@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
+import { Inter, Instrument_Serif, Roboto } from "next/font/google";
 import { Providers } from "@/components/providers/Providers";
 import { meta } from "@/lib/constants";
 import Script from "next/script";
