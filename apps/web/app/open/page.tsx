@@ -6,7 +6,7 @@ import OpenCharts from "@/components/open/OpenCharts";
 
 async function getStatsData() {
   const response = await fetch(`${BACKEND_URL}/open`, {
-    next: { revalidate: 3600 },
+    next: { revalidate: 60 * 60 * 24 },
   });
   return response.json();
 }
