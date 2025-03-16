@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { Credits } from "./navbar/Credits";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Appbar() {
   return (
@@ -19,14 +20,14 @@ export function Appbar() {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.4, ease: "easeOut" }}
-          className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 backdrop-blur-xl rounded-2xl bg-background/50 border border-neutral-200 dark:border-neutral-700 shadow-lg"
+          className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 backdrop-blur-xl rounded-2xl bg-background/50 border border-neutral-300 dark:border-neutral-900 shadow-lg"
         >
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
                 href="/"
-                className="flex items-center space-x-2 transition-opacity hover:opacity-90"
+                className="flex items-center space-x-1 transition-opacity hover:opacity-90"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -41,13 +42,13 @@ export function Appbar() {
                   <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
                 </svg>
                 <span className="hidden font-bold font-mono text-xl sm:inline-block">
-                  100xPhoto
+                  100<span className="text-pink-500">x</span>Photos
                 </span>
               </Link>
             </motion.div>
 
             {/* Auth & Pricing */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center md:gap-4 gap-2">
               <SignedIn>
                 <Button
                   variant="ghost"
@@ -97,11 +98,12 @@ export function Appbar() {
                     asChild
                   >
                     <SignInButton mode="modal">
-                      <span>Sign In</span>
+                      <span className="cursor-pointer">Sign In</span>
                     </SignInButton>
                   </Button>
                 </motion.div>
               </SignedOut>
+              <ThemeToggle />
             </div>
           </div>
         </motion.div>
